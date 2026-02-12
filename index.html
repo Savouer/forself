@@ -10,11 +10,22 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
+            /* 强制让浏览器移除点击延迟，这样 click 就像 touch 一样快 */
+            touch-action: manipulation;
         }
         
         body {
             overflow-x: hidden;
             color: #fff;
+            /* 防止手机端长按弹出系统菜单 */
+            -webkit-touch-callout: none;
+            /* 防止用户选中文本（适合沉浸式展示） */
+            user-select: none;
+            /* 解决点击时产生的黑色/蓝色高亮边框 */
+            -webkit-tap-highlight-color: transparent;
+            /* 允许平滑滚动 */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         
         /* 开场动画 */
@@ -1518,7 +1529,7 @@
                             <div class="song" onclick="playSong('song13')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260120.jpg">
                                 <h3>请记得我</h3>
-                                <p>西西里里乐队</p>
+                                <p>女神➕西西里里乐队</p>
                             </div>
                             <div class="song" onclick="playSong('song14')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260121.jpg">
@@ -2349,6 +2360,11 @@
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
                                 <h3>忆江南</h3>
                                 <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song180')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>待取名9</h3>
+                                <p>女神+西西里里乐队</p>
                             </div>
                         </div>
                     </div>
@@ -3588,11 +3604,11 @@
             song10: 'https://img.no911happystarfile.dpdns.org/Song/2026011402.mp3',
             song11: 'https://img.no911happystarfile.dpdns.org/Song/20260115.mp3',
             song12: 'https://img.no911happystarfile.dpdns.org/Song/20260119.mp3',
-            song13: 'https://img.no911happystarfile.dpdns.org/Song/20260121.mp3',
-            song14: 'https://img.no911happystarfile.dpdns.org/Song/2026012201.mp3',
-            song15: 'https://img.no911happystarfile.dpdns.org/Song/2026012202.mp3',
-            song16: 'https://img.no911happystarfile.dpdns.org/Song/2026012203.mp3',
-            song17: 'https://img.no911happystarfile.dpdns.org/Song/20260120.mp3',
+            song13: 'https://img.no911happystarfile.dpdns.org/Song/20260120.mp3',
+            song14: 'https://img.no911happystarfile.dpdns.org/Song/20260121.mp3',
+            song15: 'https://img.no911happystarfile.dpdns.org/Song/2026012201.mp3',
+            song16: 'https://img.no911happystarfile.dpdns.org/Song/2026012202.mp3',
+            song17: 'https://img.no911happystarfile.dpdns.org/Song/2026012203.mp3',
             song18: 'https://img.no911happystarfile.dpdns.org/Song/2026012501.mp3',
             song19: 'https://img.no911happystarfile.dpdns.org/Song/2026012502.mp3',
             song20: 'https://img.no911happystarfile.dpdns.org/Song/2026012503.mp3',
@@ -3755,6 +3771,7 @@
             song177: 'https://img.no911happystarfile.dpdns.org/Song/2026010806.mp3',
             song178: 'https://img.no911happystarfile.dpdns.org/Song/2026010807.mp3',
             song179: 'https://img.no911happystarfile.dpdns.org/Song/2026010808.mp3',
+            song180: 'https://img.no911happystarfile.dpdns.org/Song/20260212.mp3',
         };
         
         const songTitles = [
@@ -3773,7 +3790,7 @@
             "洛希极限", "座位", "未完成的爱", "同花顺", "同花顺", "心如止水", "执迷不悟", "小雨", "我还记得那天", "白羊", "处处吻", "月亮代表我的心", "我只在乎你",
             "把耳朵叫醒", "舍得", "说散就散", "折断玫瑰", "이젠안녕", "体面", "双鱼座", "为时已晚", "别怕我伤心", "九张机", "千古", "爱殇", "我们的纪念", "消愁",
             "눈 속에 묻힌 이름", "太晚才明白", "太晚才明白", "今昔", "一生等你", "喜欢你", "献天缘", "麻醉师", "浪人琵琶", "空空如也", "贝加尔湖畔", "piano", "岸边客",
-            "起风了", "无情画", "顿啦爱你", "忆江南"
+            "起风了", "无情画", "顿啦爱你", "忆江南", "待取名9"
         ];
 
         const audioPlayer = document.getElementById('audioPlayer');
@@ -4034,44 +4051,53 @@
             const content = document.getElementById('historyContent');
             const marquee = document.getElementById('historyMarquee');
             
-            // 隐藏触发按钮
-            trigger.style.display = 'none';
-            
-            // 显示加载动画
-            loadingContainer.classList.add('active');
-            
-            // 模拟加载进度
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    
-                    // 加载完成后隐藏加载动画，显示内容
-                    setTimeout(() => {
-                        loadingContainer.classList.remove('active');
-                        content.classList.add('active');
-                        marquee.classList.add('scrolling');
+            trigger.addEventListener('click', () => {
+                // 隐藏触发按钮
+                trigger.style.display = 'none';
+                
+                // 显示加载动画
+                loadingContainer.classList.add('active');
+                
+                // 模拟加载进度
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.random() * 10;
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
                         
-                        // ****** 修改这里：删除旧的setTimeout，改用事件监听 ******
-                        // 监听动画结束事件
-                        marquee.addEventListener('animationend', function handler() {
-                            // 动画结束后，移除滚动类，添加最终类，并更新内容
-                            marquee.classList.remove('scrolling');
-                            marquee.classList.add('final');
-                            marquee.innerHTML = `
-                                <div class="final-text">我亲爱的宝贝朋友</div>
-                                <div class="final-subtext">我们未完待续</div>
-                            `;
-                            // 移除事件监听器，防止重复执行
-                            marquee.removeEventListener('animationend', handler);
-                        }, 243000);
-                        
-                    }, 300); // 这个是加载完成后显示内容的短暂延迟，保持300毫秒即可
-                }
-                loadingProgress.style.width = progress + '%';
-            }, 100);
+                        // 加载完成后
+                        setTimeout(() => {
+                            loadingContainer.classList.remove('active');
+                            content.classList.add('active');
+                            marquee.classList.add('scrolling');
+
+                            // --- 【新增：触屏暂停功能】 ---
+                            // 手指按下时暂停
+                            marquee.addEventListener('touchstart', () => {
+                                marquee.style.animationPlayState = 'paused';
+                            });
+                            // 手指抬起时恢复
+                            marquee.addEventListener('touchend', () => {
+                                marquee.style.animationPlayState = 'running';
+                            });
+                            // ----------------------------
+
+                            // 切换到最终文本的时间建议与 CSS 动画时长对齐
+                            // 假设 CSS 是 40s (40000ms)，这里设置 42000ms 比较稳妥
+                            setTimeout(() => {
+                                marquee.classList.remove('scrolling');
+                                marquee.classList.add('final');
+                                marquee.innerHTML = `
+                                    <div class="final-text">我亲爱的宝贝朋友</div>
+                                    <div class="final-subtext">我们未完待续</div>
+                                `;
+                            }, 242000); // 这里我改成了 42秒，记得同步修改 CSS 里的 240s 哦
+                        }, 300);
+                    }
+                    loadingProgress.style.width = progress + '%';
+                }, 100);
+            });
         });
 
     
