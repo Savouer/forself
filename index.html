@@ -234,6 +234,96 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.3);
         }
+
+        /* 高级烟花画布 */
+        #fireworksCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999; /* 确保在最顶层 */
+            display: none; /* 平时隐藏 */
+            pointer-events: none;
+        }
+
+        /* 全屏黑幕 */
+        #bgOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            opacity: 0;
+            z-index: 9998;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        /* 激活状态 */
+        .show-fireworks #bgOverlay { opacity: 1; }
+        .show-fireworks #fireworksCanvas { display: block; }
+
+        /* 烟花文字容器 */
+        #fireworkMessage {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: "Source Sans Pro", "Microsoft YaHei", sans-serif;/* [cite: 48] */
+            font-size: 2.5rem;
+            text-align: center;
+            color: white;
+            opacity: 0; /* 默认隐藏 */
+            transition: opacity 1.5s ease;/* 渐变时长 [cite: 49] */
+            z-index: 10000; /* 确保在黑幕和画布最上方 */
+            pointer-events: none;
+            white-space: pre-line; /* 支持换行 [cite: 51] */
+            line-height: 1.5; /* [cite: 52] */
+            text-shadow: 0 0 20px rgba(255,255,255,0.5); /* 增加一点微光感 */
+        }
+
+        /* 文字显示状态 */
+        #fireworkMessage.show {
+            opacity: 1;
+        }
+
+        /* 天蝎座容器 (右上角) */
+        #scorpiusContainer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            /* 稍微加大一点容器宽高，作为点击感应区 */
+            width: 400px; 
+            height: 500px;
+            z-index: 100;
+            transform: scale(0.4);
+            transform-origin: top right;
+            /* 【关键】给一个透明背景，确保空白处也能触发点击 */
+            background: rgba(255, 255, 255, 0); 
+            cursor: pointer;
+            /* 让点击更灵敏 */
+            pointer-events: auto;
+        }
+
+        /* 之前不见的闪烁动画，请务必保留这段 */
+        .magic-star {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            /* 别让星星挡住容器的点击事件 */
+            pointer-events: none; 
+            box-shadow: 0 0 10px #fff;
+            animation: starBlink 4s infinite ease-in-out;
+        }
+
+        @keyframes starBlink {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }   
         
         /* 主要内容区 */
         /* 修改 .content 容器 */
@@ -689,7 +779,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="40" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-dasharray="5,5"/></svg>');
             opacity: 0.5;
         }
 
@@ -1172,7 +1261,6 @@
             cursor: pointer;
             background: linear-gradient(to right, #000000, #1a1a1a, #000000);
             color: #ff6b00;
-            font-family: 'Arial Black', sans-serif;
             text-transform: uppercase;
             letter-spacing: 1vw; /* 使用视窗单位 */
             position: relative;
@@ -1322,6 +1410,7 @@
             transform: translate(-50%, -50%);
             width: 80%;
             text-align: center;
+            cursor: pointer; /* 鼠标变成手型，提示可以点击 */
         }
         
         .final-text {
@@ -1420,6 +1509,29 @@
     </style>
 </head>
 <body>
+    <div id="bgOverlay"></div>
+    <canvas id="fireworksCanvas"></canvas>
+
+    <div id="scorpiusContainer" onclick="launchAdvancedFirework(event)">
+        <div class="magic-star" style="left: 10px; top: 30px;"></div>
+        <div class="magic-star" style="left: 25px; top: 15px;"></div>
+        <div class="magic-star" style="left: 40px; top: 5px;"></div>
+
+        <div class="magic-star" style="left: 55px; top: 35px;"></div>
+
+        <div class="magic-star heart-star" style="left: 75px; top: 60px;"></div>
+
+        <div class="magic-star" style="left: 85px; top: 90px;"></div>
+        <div class="magic-star" style="left: 90px; top: 120px;"></div>
+
+        <div class="magic-star" style="left: 105px; top: 150px;"></div>
+        <div class="magic-star" style="left: 130px; top: 165px;"></div>
+        <div class="magic-star" style="left: 160px; top: 160px;"></div>
+        <div class="magic-star" style="left: 175px; top: 140px;"></div>
+    </div>
+
+    <div id="fireworkMessage"></div>
+
     <!-- 开场动画 -->
     <div class="intro">
         <h1>欢迎来到NO.911快乐星球</h1>
@@ -1673,12 +1785,12 @@
                             </div>
                             <div class="song" onclick="playSong('song42')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
-                                <h3>他他他（朝鲜）</h3>
+                                <h3>他他他（朝鲜语）</h3>
                                 <p>LLY</p>
                             </div>
                             <div class="song" onclick="playSong('song43')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
-                                <h3>他他他（朝鲜）</h3>
+                                <h3>他他他（朝鲜语）</h3>
                                 <p>LLY</p>
                             </div>
                             <div class="song" onclick="playSong('song44')">
@@ -1913,7 +2025,7 @@
                             </div>
                             <div class="song" onclick="playSong('song90')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
-                                <h3>走吗</h3>
+                                <h3>走马</h3>
                                 <p>LLY</p>
                             </div>
                             <div class="song" onclick="playSong('song91')">
@@ -2218,7 +2330,7 @@
                             </div>
                             <div class="song" onclick="playSong('song151')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122303.jpg">
-                                <h3>舍得</h3>
+                                <h3>说散就散</h3>
                                 <p>LLY</p>
                             </div>
                             <div class="song" onclick="playSong('song152')">
@@ -2472,13 +2584,12 @@
      <!-- 底部游戏风格互动组件 -->
     <div class="history-container" id="historyContainer">
         <div class="history-trigger" id="historyTrigger">
-            <h2>来时路</h2>
-            <p>点击探索我们的故事</p>
+            <h2>开启回忆</h2>
         </div>
-        
+
         <!-- 加载动画容器 -->
         <div class="loading-container" id="loadingContainer">
-            <div class="loading-text">加载历史中...</div>
+            <div class="loading-text">正在向星球申请连接...</div>
             <div class="loading-bar">
                 <div class="loading-progress" id="loadingProgress"></div>
             </div>
@@ -3778,7 +3889,7 @@
             "神的女孩", "梦开始的地方", "相识即序曲", "绽放", "永不落的星火", "爱 回来了", "璀璨如星的你", "反方向的你", "坏坏的男人", "未完成的歌", "即兴小曲",
             "无尽的尽头", "让爱放肆张狂", "嗨歌1", "嗨歌2", "嗨歌3", "请记得我", "细品1", "细品2", "让爱放肆张狂（续）", "Know Me Too Well", "囚爱",
             "王者之王", "你这个倔强的坏女人", "劲之三部曲", "待取名1", "待取名2", "待取名3", "待取名4", "待取名5", "待取名6", "待取名7", "待取名8",
-            "我爱你对不起", "宝贝摇篮曲", "我的宝贝唯一", "她只是我的妹妹", "爱情专属权", "镇痛剂", "苟活之重生", "心愿便利贴", "他他他（朝鲜）", "他他他（朝鲜）",
+            "我爱你对不起", "宝贝摇篮曲", "我的宝贝唯一", "她只是我的妹妹", "爱情专属权", "镇痛剂", "苟活之重生", "心愿便利贴", "他他他（朝鲜语）", "他他他（朝鲜语）",
             "他他他（中文）", "when I get old", "绮怀", "人间白首", "原点", "只若初见", "三妻四妾", "断钗", "星光下的梦想", "情深深雨濛濛", "恋爱吗姐姐",
             "祝你爱我到天荒地老", "wonder woman", "昨夜风今宵月", "over and over again", "我们不是相爱过吗", "不要离开", "如愿", "明月天涯", "奇迹再现",
             "为你而来", "despacito", "告诉桃花不必开", "坏女孩", "四点的海棠花未眠", "淤泥里的花", "淤泥里的花", "你走", "你听不见雨的声音", "心愿便利贴",
@@ -3931,27 +4042,34 @@
         const dailySnippets = [
             {
                 id: 1,
+                title: "戒过毒吗？小孩",
+                date: "2025.05.13",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/DailySnippets/20250513.mp4" // 示例URL
+            },
+            {
+                id: 2,
                 title: "三个帅哥",
                 date: "2026.02.08",
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/DailySnippets/20260208.mp4" // 示例URL
             },
             {
-                id: 2,
+                id: 3,
                 title: "快递把我毁了",
                 date: "2026.02.09",
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/DailySnippets/20260209.mp4" // 示例URL
             },
             {
-                id: 3,
+                id: 4,
                 title: "当你有个爱说废话的朋友",
                 date: "2026.02.10",
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/DailySnippets/20260210.mp4" // 示例URL
             },
             {
-                id: 4,
+                id: 5,
                 title: "新年快乐",
                 date: "2026.02.12",
                 type: "video",
@@ -4043,62 +4161,307 @@
         });
 
         // 来时路互动功能
-        document.getElementById('historyTrigger').addEventListener('click', function() {
-            const container = document.getElementById('historyContainer');
-            const trigger = document.getElementById('historyTrigger');
-            const loadingContainer = document.getElementById('loadingContainer');
-            const loadingProgress = document.getElementById('loadingProgress');
-            const content = document.getElementById('historyContent');
-            const marquee = document.getElementById('historyMarquee');
+        const container = document.getElementById('historyContainer');
+        const trigger = document.getElementById('historyTrigger');
+        const loadingContainer = document.getElementById('loadingContainer');
+        const loadingProgress = document.getElementById('loadingProgress');
+        const content = document.getElementById('historyContent');
+        const marquee = document.getElementById('historyMarquee');
             
-            trigger.addEventListener('click', () => {
-                // 隐藏触发按钮
-                trigger.style.display = 'none';
-                
-                // 显示加载动画
-                loadingContainer.classList.add('active');
-                
-                // 模拟加载进度
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += Math.random() * 10;
-                    if (progress >= 100) {
-                        progress = 100;
-                        clearInterval(interval);
+        // 【关键】保存最初的文字内容，方便重置时还原
+        const originalMarqueeHTML = marquee.innerHTML;
+        
+        // 【新增】定义一个变量来存放计时器，防止重置后还在偷偷跑
+        let scrollTimer;
+
+        function startApp(e) {
+            if (e) e.preventDefault();
+            
+            // 隐藏按钮
+            trigger.style.display = 'none';
+            loadingContainer.classList.add('active');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        loadingContainer.classList.remove('active');
+                        content.classList.add('active');
                         
-                        // 加载完成后
-                        setTimeout(() => {
-                            loadingContainer.classList.remove('active');
-                            content.classList.add('active');
-                            marquee.classList.add('scrolling');
+                        // 确保开始前样式是干净的
+                        marquee.style.cssText = ''; 
+                        marquee.classList.add('scrolling');
+                        
+                        // 触屏暂停功能
+                        marquee.ontouchstart = () => marquee.style.animationPlayState = 'paused';
+                        marquee.ontouchend = () => marquee.style.animationPlayState = 'running';
 
-                            // --- 【新增：触屏暂停功能】 ---
-                            // 手指按下时暂停
-                            marquee.addEventListener('touchstart', () => {
-                                marquee.style.animationPlayState = 'paused';
-                            });
-                            // 手指抬起时恢复
-                            marquee.addEventListener('touchend', () => {
-                                marquee.style.animationPlayState = 'running';
-                            });
-                            // ----------------------------
+                        // 记录这个计时器，方便后面清除
+                        scrollTimer = setTimeout(showFinalPage, 241000);
+                    }, 300);
+                }
+                loadingProgress.style.width = progress + '%';
+            }, 100);
+        }
 
-                            // 切换到最终文本的时间建议与 CSS 动画时长对齐
-                            // 假设 CSS 是 40s (40000ms)，这里设置 42000ms 比较稳妥
-                            setTimeout(() => {
-                                marquee.classList.remove('scrolling');
-                                marquee.classList.add('final');
-                                marquee.innerHTML = `
-                                    <div class="final-text">我亲爱的宝贝朋友</div>
-                                    <div class="final-subtext">我们未完待续</div>
-                                `;
-                            }, 242000); // 这里我改成了 42秒，记得同步修改 CSS 里的 240s 哦
-                        }, 300);
+        function showFinalPage() {
+            // 如果已经被手动重置了（内容区不显示了），就不要执行后续逻辑
+            if (!content.classList.contains('active')) return;
+
+            marquee.classList.remove('scrolling');
+            marquee.classList.add('final');
+            
+            // 重置一下 top 和 transform，确保居中样式生效
+            marquee.style.top = '';
+            marquee.style.transform = '';
+            
+            marquee.innerHTML = `
+                <div class="final-text">我亲爱的宝贝朋友</div>
+                <div class="final-subtext">我们未完待续</div>
+                <div class="hint-text">(点击屏幕重新开启回忆)</div>
+            `;
+            
+            marquee.onclick = resetExperience;
+            marquee.ontouchstart = (e) => {
+                if (marquee.classList.contains('final')) {
+                    if (e) e.preventDefault();
+                    resetExperience();
+                } else {
+                    marquee.style.animationPlayState = 'paused';
+                }
+            };
+        }
+
+        function resetExperience() {
+            // 1. 【核心】停止之前的倒计时，防止它在后台突然跳出“未完待续”
+            clearTimeout(scrollTimer);
+            
+            // 2. 隐藏内容区
+            content.classList.remove('active');
+            loadingContainer.classList.remove('active');
+            
+            // 3. 【核心】清除所有 JS 留下的行内样式（如 top: 100% 或暂停状态）
+            marquee.style.cssText = ''; 
+            marquee.classList.remove('scrolling', 'final');
+            marquee.onclick = null; 
+            
+            // 4. 还原文字和进度
+            marquee.innerHTML = originalMarqueeHTML;
+            loadingProgress.style.width = '0%';
+            
+            // 5. 还原按钮位置（设为空字符串会自动回到 CSS 定义的位置）
+            setTimeout(() => {
+                trigger.style.display = ''; 
+            }, 300);
+        }
+
+        // 初始绑定
+        trigger.addEventListener('click', startApp);
+        trigger.addEventListener('touchstart', startApp);
+
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        const messageEl = document.getElementById('fireworkMessage');
+        let cannonballs = [];
+        let explosions = [];
+        let animationId = null;
+        let isShowingText = false; // 是否正在展示文字
+
+        // 核心：记录当前播放到第几个颜色和文字
+        let paletteIndex = 0;
+
+        // --- 优化后的参数（修复直接消失的问题） ---
+        const maxLevels = 3;            // 连炸层数
+        const riseSpeed = 7;            // 上升速度
+        const subExplosionChance = 0.005; // 连炸触发概率
+
+        // 1. 定义四种颜色及其对应的文字 [cite: 252-263]
+        const colorPalettes = [
+            { 
+                cannon: '#affdf4', 
+                particles: ["#ff4747", "#00ceed", "#fff", "pink"], 
+                text: "快乐不止今天\n而在未来的每一天" 
+            },
+            { 
+                cannon: '#fff', 
+                particles: ["#ffb7c5", "#ff85a2", "#fbb1bd", "#fff"], 
+                text: "你是星河中最亮的那颗\n愿你岁岁平安" 
+            },
+            { 
+                cannon: '#ffecd2', 
+                particles: ["#fcb045", "#fd1d1d", "#833ab4", "#fff"], 
+                text: "遇见你这件事\n本身就是奇迹" 
+            },
+            { 
+                cannon: '#fffce0', 
+                particles: ["#d4af37", "#f9d71c", "#ffefd5", "#fff"], 
+                text: "我亲爱的宝贝朋友\n一直一起走下去吧" // [cite: 58]
+            }
+        ];
+
+        let currentMessage = ""; // 存放当前选中的文字
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function launchAdvancedFirework(e) {
+            if (e && e.stopPropagation) e.stopPropagation();
+            if (isShowingText) return; // 如果文字正在显示，暂时不许发射
+
+            document.body.classList.add('show-fireworks');
+            canvas.style.display = 'block';
+
+            const startX = 0;
+            const startY = canvas.height;
+            const targetX = canvas.width / 2;
+            const targetY = canvas.height * 0.35;
+
+            // --- 核心修改：按顺序选取方案 ---
+            const palette = colorPalettes[paletteIndex];
+            currentMessage = palette.text;
+
+            // 更新索引，确保 0, 1, 2, 3 循环
+            paletteIndex = (paletteIndex + 1) % colorPalettes.length;
+
+            // 随机选一套方案并记录文字
+            // const palette = colorPalettes[Math.floor(Math.random() * colorPalettes.length)];
+            // currentMessage = palette.text;
+            
+            cannonballs.push(new Cannonball(startX, startY, targetX, targetY, palette));
+
+            if (!animationId) animate();
+        }
+
+        class Cannonball {
+            constructor(x, y, tx, ty, colorSet) {
+                this.x = x; this.y = y; this.tx = tx; this.ty = ty;
+                this.color = colorSet.cannon;
+                this.pColors = colorSet.particles;
+                const dx = tx - x;
+                const dy = ty - y;
+                this.angle = Math.atan2(dy, dx);
+                this.velocity = riseSpeed;
+                this.alive = true;
+            }
+            update() {
+                this.x += Math.cos(this.angle) * this.velocity;
+                this.y += Math.sin(this.angle) * this.velocity;
+
+                const dist = Math.hypot(this.tx - this.x, this.ty - this.y);
+                // 接近目标高度时爆炸
+                if (dist < 15 || this.y <= this.ty) {
+                    this.alive = false;
+                    createExplosion(this.x, this.y, this.pColors, 1);
+                }
+            }
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createExplosion(x, y, pColors, level) {
+            if (level > maxLevels) return;
+            
+            // 【优化】显著减少粒子数量：主爆炸由 80 减至 40，子爆炸由 20 减至 10
+            const count = level === 1 ? 50 : 20; 
+            
+            for (let i = 0; i < count; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                // 【优化】微调速度范围，让扩散更有层次感，不挤在一起
+                const speed = Math.random() * (15 / level) + 2; 
+                
+                explosions.push({
+                    x: x, y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    alpha: 1,
+                    decay: 0.02 + Math.random() * 0.015, // 略微增加消失速度的随机性
+                    color: pColors[Math.floor(Math.random() * pColors.length)], // [cite: 219, 220]
+                    pColors: pColors,
+                    level: level,
+                    hasSubExploded: false
+                });
+            }
+        }
+
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = 'rgba(18, 18, 18, 0.2)'; // [cite: 271, 272]
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 更新炮弹和粒子
+            for (let i = cannonballs.length - 1; i >= 0; i--) {
+                cannonballs[i].update();
+                cannonballs[i].draw();
+                if (!cannonballs[i].alive) cannonballs.splice(i, 1);
+            }
+            for (let i = explosions.length - 1; i >= 0; i--) {
+                const p = explosions[i];
+                p.x += p.vx; 
+                p.y += p.vy; 
+                p.vy += 0.1; // 略微减小重力感，让粒子飞得更轻盈
+                p.alpha -= p.decay;
+
+                // 【优化】降低连炸触发频率：alpha 阈值调高至 0.85 且 概率降至 0.05
+                // 这样只有少数粒子能在刚炸开时触发一个清脆的次级爆炸，而不是铺天盖地
+                if (p.level < maxLevels && !p.hasSubExploded && p.alpha < 0.85) { 
+                    if (Math.random() < 0.05) { 
+                        p.hasSubExploded = true;
+                        createExplosion(p.x, p.y, p.pColors, p.level + 1);
                     }
-                    loadingProgress.style.width = progress + '%';
+                }
+                if (p.alpha <= 0) { explosions.splice(i, 1); continue; }
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+            }
+
+            // --- 核心改动：文字渐变显示逻辑 ---
+            if (cannonballs.length === 0 && explosions.length === 0 && !isShowingText) {
+                isShowingText = true; // 进入文字展示阶段
+                
+                // 1. 设置文字内容
+                messageEl.innerText = currentMessage;
+                
+                // 2. 渐变出现
+                setTimeout(() => {
+                    messageEl.classList.add('show');
                 }, 100);
-            });
-        });
+
+                // 3. 展示一段时间后，渐变退出
+                setTimeout(() => {
+                    messageEl.classList.remove('show');
+                    
+                    // 4. 文字完全消失后，清空并恢复背景
+                    setTimeout(() => {
+                        document.body.classList.remove('show-fireworks');
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        canvas.style.display = 'none';
+                        cancelAnimationFrame(animationId);
+                        animationId = null;
+                        isShowingText = false;
+                    }, 1500); // 对应 CSS transition 时长
+                }, 3500); // 文字停留展示的时间
+            }
+        }
 
     
     </script>
