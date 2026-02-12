@@ -1,0 +1,4076 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No.911 快乐星球</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            overflow-x: hidden;
+            color: #fff;
+        }
+        
+        /* 开场动画 */
+        .intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: introAnimation 5s ease-in-out forwards;
+            pointer-events: none; /* 动画期间禁止交互 */
+        }
+        
+        .intro h1 {
+            font-size: 5rem;
+            color: white;
+            opacity: 0;
+            animation: fadeIn 4.5s ease-in-out forwards;
+            animation-delay: 0.5s; /* 延迟0.5秒后开始文字淡入 */
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            font-family: 'Arial Black', sans-serif;
+            letter-spacing: 0.2em;
+        }
+
+        /* 添加加载进度条效果 */
+        .intro::after {
+            content: '';
+            position: absolute;
+            bottom: 20vh;
+            left: 20%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            animation: loadingBar 4.5s ease-in-out forwards;
+            animation-delay: 0.5s;
+            border-radius: 3px;
+        }
+
+        @keyframes loadingBar {
+            0% {
+                width: 0;
+                left: 20%;
+            }
+            50% {
+                width: 60%;
+                left: 20%;
+            }
+            100% {
+                width: 0;
+                left: 100%;
+            }
+        }
+
+        /* 添加星星闪烁效果 */
+        .intro::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(2px 2px at 20% 30%, white, transparent),
+                radial-gradient(3px 3px at 40% 70%, white, transparent),
+                radial-gradient(2px 2px at 60% 20%, white, transparent),
+                radial-gradient(3px 3px at 80% 50%, white, transparent),
+                radial-gradient(2px 2px at 30% 80%, white, transparent);
+            opacity: 0;
+            animation: starsFade 5s ease-in-out forwards;
+        }
+
+        @keyframes starsFade {
+            0% {
+                opacity: 0;
+            }
+            30% {
+                opacity: 0.5;
+            }
+            70% {
+                opacity: 0.8;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .intro h1 {
+                font-size: 3rem;
+                letter-spacing: 0.1em;
+            }
+            
+            .intro::after {
+                bottom: 15vh;
+                left: 10%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .intro h1 {
+                font-size: 2rem;
+                letter-spacing: 0.05em;
+            }
+            
+            .intro::after {
+                bottom: 10vh;
+                left: 5%;
+            }
+        }
+        
+        .header-title {
+            position: relative;
+            top: 2.5vh;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 2.5rem;
+            color: white;
+            opacity: 0;
+            z-index: 999;
+            animation: headerAnimation 3.5s ease-out forwards;
+            animation-delay: 9s;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            transform: translateY(-100%);
+        }
+
+         /* 新增全屏图片动画 */
+        .fullscreen-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: url('https://img.no911happystarfile.dpdns.org/01.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0;
+            z-index: 998;
+            animation: imageFade 7s ease-in-out forwards;
+            animation-delay: 3s;
+        }
+        
+        @keyframes imageFade {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; display: none; }
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        @keyframes introAnimation {
+            0% {
+                opacity: 1;
+            }
+            80% { /* 在动画进行到80%时，背景依然完全不透明 */
+                opacity: 1;
+            }
+            95% { /* 在81%的时刻，透明度瞬间变为0 */
+                opacity: 0;
+            }
+            100% { /* 保持透明，并最终隐藏元素 */
+                opacity: 0;
+                display: none;
+                visibility: hidden;
+            }
+        }
+        
+        @keyframes headerAnimation {
+            0% { opacity: 0; transform: translateY(-100%); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 背景图 */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://img.no911happystarfile.dpdns.org/1122.jpg') no-repeat center center;
+            background-size: cover; /* 完整显示图片，保持比例 */
+            z-index: -1;
+        }
+        
+        .background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 主要内容区 */
+        /* 修改 .content 容器 */
+        .content {
+            display: flex;
+            min-height: 95vh;
+            padding: 8vh 4vw 2vh; /* 改为视窗单位 */
+            flex-wrap: wrap; /* 允许在小屏幕上换行 */
+            gap: 2vw; /* 添加间距，使用视窗单位 */
+        }
+
+        /* 在小屏幕上改为垂直排列 */
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+                padding: 8vh 3vw 2vh;
+            }
+        }
+
+        /* 左侧整体容器 */
+        .letters-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            margin-top: 0; /* 移除负边距 */
+            gap: 2vh; /* 使用视窗单位 */
+            min-width: 300px; /* 设置最小宽度 */
+        }
+
+
+        /* 图片轮播 */
+        /* 修改 .carousel 容器 */
+        .carousel {
+            width: 100%;
+            height: 60vh; /* 改为视窗高度百分比 */
+            max-height: 750px; /* 保留最大高度限制 */
+            min-height: 600px; /* 设置最小高度 */
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-top: 420px; /* 移除负边距 */
+            background: #262626;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            flex: 1; /* 允许弹性伸缩 */
+        }
+
+        /* 在小屏幕上调整高度 */
+        @media (max-width: 768px) {
+            .carousel {
+                height: 50vh;
+                margin-bottom: 2vh;
+            }
+        }
+
+        /* 在手机上进一步调整 */
+        @media (max-width: 480px) {
+            .carousel {
+                height: 40vh;
+            }
+        }
+        
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            height: 100%;
+        }
+        
+        .carousel-item {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 保持图片完整比例 */
+            object-position: center;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* 背景填充区域 */
+        .carousel-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #262626; /* 与容器背景一致 */
+            z-index: -1;
+        }
+
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.5);
+            border: none;
+            color: #000000;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .carousel-control.prev {
+            left: 10px;
+        }
+        
+        .carousel-control.next {
+            right: 10px;
+        }
+
+        /* 新增下拉选择器样式 */
+        .carousel-selector {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            z-index: 20;
+        }
+        
+        .carousel-selector select {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid #ff6b00;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .carousel-selector select:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(255, 107, 0, 0.7);
+        }
+
+        /* 音乐播放器 */
+        .music-player {
+            width: 100%;
+            height: 60vh; /* 改为视窗高度百分比 */
+            max-height: 440px; /* 保留最大高度限制 */
+            min-height: 340px; /* 设置最小高度 */
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 8px;
+            backdrop-filter: blur(5px);
+            position: relative; /* 容器设为相对定位 */
+        }
+        
+        .music-player h2 {
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .playlist-container {
+            width: 100%;
+            overflow-x: auto;
+            position: relative;
+            /* 新增：占据剩余的主要空间 */
+            flex: 1;
+            /* 移除其可能自带的padding/margin */
+            margin: 0;
+            padding: 0;
+        }
+        
+        .playlist-wrapper {
+            position: relative;
+            width: 100%;
+            overflow-x: auto; /* 必须存在 */
+            scroll-behavior: smooth;
+            /* 新增：明确隐藏纵向滚动条，并定义滚动条样式 */
+            overflow-y: hidden;
+            /* 确保没有额外内边距占用空间 */
+            padding: 0;
+            margin: 0;
+        }
+
+        /* 可选：美化滚动条 */
+        .playlist-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+        .playlist-wrapper::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 107, 0.6);
+            border-radius: 3px;
+        }
+        
+        .playlist {
+            position: relative;
+            display: flex;
+            gap: 1vw; /* 大幅减少歌曲项之间的水平间隙 */
+            min-width: max-content;
+            transition: transform 0.5s ease;
+            padding: 0.5vh 0.5vw; /* 大幅减少播放列表区域的内边距 */
+            flex-wrap: nowrap;
+            /* 确保高度不超出容器 */
+            align-items: center;
+            min-height: 0;
+        }
+        
+        .playlist::-webkit-scrollbar {
+            height: 5px;
+        }
+        
+        .playlist::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+        }
+        
+        .song {
+            position: relative;
+            width: clamp(140px, 14vw, 160px); /* 略微调小每个歌曲项的宽度 */
+            /* 关键：移除或大幅减少外边距，使用上方的gap控制水平间距 */
+            margin: 0 0 0.5vh 0; /* 只保留很小的下边距 */
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 1vh 0.8vw; /* 大幅减少歌曲项内部的内边距 */
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            display: inline-block;
+        }
+
+        /* 在小屏幕上调整歌曲项 */
+        @media (max-width: 768px) {
+            .song {
+                width: 140px;
+                margin: 0 2vw 2vh 0;
+            }
+        }
+        
+        .song:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .song img {
+            position: relative;
+            width: 100%;
+            height: 140px; /* 调小图片固定高度 */
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 8px; /* 减少图片与标题的间距 */
+        }
+                
+        .song h3 {
+            position: relative;
+            font-size: 0.9rem; /* 略微调小标题字体 */
+            margin-bottom: 3px;
+            line-height: 1.2;
+        }
+                
+        .song p {
+            position: relative;
+            font-size: 0.75rem; /* 略微调小描述字体 */
+            opacity: 0.7;
+            line-height: 1.2;
+            margin: 0;
+        }
+                
+        .audio-player {
+            width: 100%;
+            margin-top: 10px; /* 大幅减少音频控制条与上方内容区域的间距 */
+            /* 移除内边距 */
+            padding: 0;
+        }
+        
+        audio {
+            width: 100%;
+        }
+
+        /* 播放模式控制样式 */
+        .playback-controls {
+            display: none; /* 隐藏原来的控制区域 */
+        }
+
+        /* 新的播放模式容器 - 放在音频播放器旁边 */
+        .audio-player {
+            position: relative;
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 音频控件样式 */
+        .audio-player audio {
+            flex: 1;
+        }
+
+        /* 播放模式按钮容器 */
+        .mode-selector-compact {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        /* 紧凑型模式按钮 */
+        .mode-button-compact {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0;
+        }
+
+        .mode-button-compact:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .mode-button-compact.active {
+            background: rgba(255, 107, 107, 0.7);
+            border-color: rgba(255, 107, 107, 0.9);
+        }
+
+        /* 紧凑型图标样式 */
+        .icon-compact {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            transition: all 0.3s ease;
+        }
+
+        .mode-button-compact.active .icon-compact {
+            fill: #ff6b6b;
+        }
+
+        /* 工具提示 */
+        .mode-button-compact::after {
+            content: attr(title);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+
+        .mode-button-compact:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* 小屏幕下的进一步压缩 */
+        @media (max-width: 768px) {
+            .music-player {
+                height: 45vh;
+                padding: 6px;
+            }
+            .song {
+                width: 130px;
+                padding: 0.8vh 2vw;
+            }
+            .song img {
+                height: 60px;
+                margin-bottom: 6px;
+            }
+            .playlist {
+                gap: 2vw; /* 在移动端可以适当增加一点间隙便于触摸 */
+                padding: 0.5vh 1vw;
+            }
+            .audio-player {
+                margin-top: 8px;
+            }
+        }
+
+        
+        /* 右侧内容 */
+        .right-content {
+            flex: 1;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            margin-top: -35px; /* 移除负边距 */
+            gap: 2vh; /* 使用视窗单位 */
+            min-width: 300px; /* 设置最小宽度 */
+        }
+
+        /* 右侧区域 - 娅粉来信 */
+        .letters-container {
+            flex: 1;
+            padding: 2vh 2vw;
+            position: relative;
+            height: auto; /* 改为自动高度 */
+            min-height: 450px; /* 设置最小高度 */
+            max-height: 500px; /* 设置最大高度 */
+            width: 100%;
+            margin-top: 0;
+            margin-right: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 信封封面 - 黑色系风格 */
+        .letter-cover {
+            width: 100%;
+            height: 50vh; /* 改为视窗高度 */
+            min-height: 450px; /* 保留最小高度 */
+            max-height: 550px; /* 设置最大高度 */
+            background: linear-gradient(135deg, #1a1a1a, #333333);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .letter-cover:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+            border-color: rgba(255, 107, 107, 0.3);
+        }
+
+        .letter-cover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="40" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="2" stroke-dasharray="5,5"/></svg>');
+            opacity: 0.5;
+        }
+
+        .letter-cover::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                rgba(255, 107, 107, 0.1) 50%,
+                transparent 55%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        .letter-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem); /* 使用clamp实现响应式字体 */
+            color: #ff6b6b;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .letter-subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+
+        /* 选项界面 */
+        .letters-options {
+            width: 100%;
+            height: 50vh; /* 改为视窗高度 */
+            min-height: 450px; /* 保留最小高度 */
+            max-height: 550px; /* 设置最大高度 */
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            display: none;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .letters-options.active {
+            display: flex;
+        }
+
+        .options-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .back-button {
+            background: rgba(255, 107, 107, 0.8);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 107, 107, 1);
+            transform: translateX(-3px);
+        }
+
+        .options-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .options-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .options-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 107, 0.6);
+            border-radius: 3px;
+        }
+
+        .options-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .option-item {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .option-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+            border-color: rgba(255, 107, 107, 0.5);
+        }
+
+        .option-bigtitle {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .option-title {
+            font-size: 1.3rem;
+            color: #ff6b6b;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .option-date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        /* 预览容器样式 */
+        .preview-container {
+            width: 100%;
+            height: 50vh; /* 改为视窗高度 */
+            min-height: 450px; /* 保留最小高度 */
+            max-height: 550px; /* 设置最大高度 */
+            display: flex;
+            flex-direction: column;
+            padding: 2vh 2vw;
+            color: white;
+            overflow-y: auto;
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-header h3 {
+            font-size: 1.8rem;
+            color: #ff6b6b;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .preview-write {
+            margin-top: -20px;
+            margin-bottom: -20px;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .preview-date {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+
+        .preview-content {
+            flex: 1;
+            padding-top: 0;
+            padding-bottom: 15px;
+            padding-left: 15px;
+            padding-right: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-top: -5px;
+            margin-bottom: 100px;
+            overflow-y: auto; /* 启用垂直滚动 */
+            white-space: pre-line;
+            display: block; /* 改为block显示 */
+            text-align: left; /* 文本左对齐 */
+        }
+
+        .preview-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .preview-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 107, 0.6);
+            border-radius: 3px;
+        }
+
+        .preview-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .preview-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .preview-button {
+            background: rgba(255, 107, 107, 0.8);
+            border: 1px solid rgba(255, 107, 107, 0.9);
+            color: white;
+            padding: 12px 30px; /* 稍微增大按钮尺寸 */
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem; /* 稍微增大字体 */
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            width: 200px; /* 设置固定宽度，使按钮看起来更平衡 */
+            margin: 0 auto; /* 确保按钮在容器中水平居中 */
+        }
+
+        .view-video-button {
+            background: rgba(255, 107, 107, 0.8);
+            border: 1px solid rgba(255, 107, 107, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .view-video-button:hover {
+            background: rgba(255, 107, 107, 1);
+            transform: translateY(-2px);
+        }
+
+        .preview-button:hover {
+            background: rgba(255, 107, 107, 1);
+            transform: translateY(-2px);
+        }
+
+        .preview-button.primary {
+            background: rgba(255, 107, 107, 0.8);
+            border-color: rgba(255, 107, 107, 0.9);
+        }
+
+        .preview-button.primary:hover {
+            background: rgba(255, 107, 107, 1);
+        }
+
+        /* 内容播放区域 */
+        .content-player {
+            width: 100%;
+            height: 50vh; /* 改为视窗高度 */
+            min-height: 450px; /* 设置最小高度 */
+            max-height: 550px; /* 设置最大高度 */
+            background: rgba(0, 0, 0, 0.9);
+            border-radius: 15px;
+            display: none;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .content-player.active {
+            display: flex;
+        }
+
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .player-header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .player-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .close-button {
+            background: rgba(255, 107, 107, 0.8);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            background: rgba(255, 107, 107, 1);
+            transform: translateY(-2px);
+        }
+
+        .player-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .video-player {
+            max-width: 42vw; /* 限制最大高度 */
+            max-height: 37vh; /* 限制最大高度 */
+            object-fit: contain; /* 保持：确保图片完整显示，不变形 */
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .image-player {
+            max-width: 45vw; /* 限制最大高度 */
+            max-height: 35vh; /* 限制最大高度 */
+            object-fit: contain; /* 保持：确保图片完整显示，不变形 */
+            border-radius: 10px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+        }
+
+
+        /* 图片轮播容器样式 */
+        .image-carousel-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* 隐藏超出容器的内容 */
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.3); /* 可选：添加一个背景色 */
+        }
+
+        /* 轮播轨道 - 水平排列所有幻灯片 */
+        .carousel-track {
+            display: flex;
+            height: 100%;
+            transition: transform 0.5s ease-in-out; /* 添加滑动动画 */
+            will-change: transform;
+        }
+
+        /* 单张幻灯片 */
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 10px; /* 为图片添加一些内边距 */
+        }
+
+        .carousel-slide img {
+            max-width: 100%;
+            max-height: 35vh; /* 新增：限制轮播图图片的最大高度 */
+            object-fit: contain; /* 保持：确保图片完整显示 */
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 左右箭头按钮 */
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .carousel-button:hover {
+            background-color: rgba(255, 107, 107, 0.8); /* 使用您主题的红色 */
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .carousel-button-prev {
+            left: 15px;
+        }
+
+        .carousel-button-next {
+            right: 15px;
+        }
+
+        /* 指示器容器 */
+        .carousel-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        /* 单个指示器（小圆点） */
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        .indicator:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.2);
+        }
+
+        .indicator.active {
+            background-color: #ff6b6b; /* 激活状态使用主题色 */
+            transform: scale(1.2);
+        }
+        
+
+         /* 底部互动框 - 游戏风格 */
+        .history-container {
+            position: relative;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25vh; /* 改为视窗高度 */
+            min-height: 150px; /* 设置最小高度 */
+            max-height: 200px; /* 设置最大高度 */
+            background: rgba(0, 0, 0, 0.85);
+            border-top: 3px solid #ff6b00;
+            z-index: 900;
+            overflow: hidden;
+            box-shadow: 0 -5px 15px rgba(255, 107, 0, 0.3);
+        }
+
+        .history-trigger {
+            width: 100%;
+            height: 100%; /* 继承父容器高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background: linear-gradient(to right, #000000, #1a1a1a, #000000);
+            color: #ff6b00;
+            font-family: 'Arial Black', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1vw; /* 使用视窗单位 */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-trigger::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent 45%,
+                rgba(255, 107, 0, 0.2) 50%,
+                transparent 55%
+            );
+            transform: rotate(30deg);
+            animation: shine 3s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        .history-trigger h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin-bottom: 1vh;
+            text-shadow: 0 0 10px rgba(255, 107, 0, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .history-trigger p {
+            font-size: 1rem;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 进度条加载动画 */
+        .loading-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .loading-container.active {
+            display: flex;
+        }
+
+        .loading-text {
+            color: #ff6b00;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px rgba(255, 107, 0, 0.7);
+        }
+
+        .loading-bar {
+            width: 80%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid #ff6b00;
+        }
+
+        .loading-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff6b00, #ff9e00);
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.7);
+        }
+
+        .loading-progress::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.8),
+                transparent
+            );
+            animation: loadingShine 1.5s infinite;
+        }
+
+        @keyframes loadingShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 滚动字幕区域 */
+        .history-content {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            opacity: 0;
+            visibility: hidden;
+            background: rgba(0, 0, 0, 0.9);
+            transition: opacity 1s ease;
+        }
+
+        .history-content.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .history-marquee {
+            position: absolute;
+            width: 100%;
+            /* 初始定位在父容器的最底部 */
+            top: 100%; 
+            font-size: 1.2rem;
+            line-height: 1.8;
+            left: 0;
+            transform: translateY(0);
+            text-align: center;
+        }
+
+        .history-marquee.scrolling {
+            /* 使用 top 从 100% 运动到 0%，同时 translateY(-100%) 确保文字完全消失 */
+            animation: optimizedScroll 240s linear forwards;
+        }
+        
+        .history-marquee.final {
+            animation: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            text-align: center;
+        }
+        
+        .final-text {
+            font-size: 2.5rem;
+            color: #ff6b00;
+            text-shadow: 0 0 20px rgba(255, 107, 0, 0.8);
+            padding-top: 120px;
+            animation: pulse 2s infinite alternate;
+        }
+        
+        .final-subtext {
+            font-size: 2rem;
+            color: #fff;
+            padding-bottom: 100px;
+            opacity: 0.9;
+        }
+        
+        @keyframes optimizedScroll {
+            0% { 
+                top: 100%; 
+                transform: translateY(0); 
+            }
+            100% { 
+                top: 0; 
+                transform: translateY(-100%); 
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+                /* 基础字体响应式 */
+        html {
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            html {
+                font-size: 12px;
+            }
+        }
+
+        /* 响应式标题 */
+        h1, h2, h3, h4 {
+            line-height: 1.3;
+        }
+
+        h1 { font-size: clamp(1.8rem, 5vw, 3rem); }
+        h2 { font-size: clamp(1.5rem, 4vw, 2.5rem); }
+        h3 { font-size: clamp(1.2rem, 3vw, 1.8rem); }
+
+        /* 手机设备 (最大宽度 480px) */
+        @media (max-width: 480px) {
+            /* 调整内容区域内边距 */
+            .content {
+                padding: 6vh 3vw 2vh;
+            }
+            
+            /* 调整轮播控制按钮大小 */
+            .carousel-control {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+            
+            /* 调整选项界面 */
+            .letters-options {
+                padding: 3vw;
+            }
+            
+            .option-item {
+                padding: 3vw;
+                margin-bottom: 2vw;
+            }
+            
+            /* 调整音乐播放器按钮 */
+            .mode-button-compact {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .icon-compact {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <!-- 开场动画 -->
+    <div class="intro">
+        <h1>欢迎来到NO.911快乐星球</h1>
+    </div>
+
+    <!-- 新增全屏图片动画 -->
+    <div class="fullscreen-image"></div>
+    
+    <!-- 顶部停留标题 -->
+    <div class="header-title">欢迎来到NO.911快乐星球</div>
+    
+    <!-- 背景图 -->
+    <div class="background"></div>
+    
+    <!-- 主要内容区 -->
+    <div class="content">
+        <!-- 左侧区域 -->
+        <div class="letters-container">
+            <!-- 图片轮播 -->
+            <div class="carousel">
+                 <!-- 下拉选择器 -->
+                <div class="carousel-selector">
+                    <select id="imageSourceSelect" onchange="changeImageSource()">
+                        <option value="default">LLY</option>
+                        <option value="xixilili">西西里里</option>
+                        <option value="relatives">亲戚人物</option>
+                        <option value="friends">编外朋友</option>
+                    </select>
+                </div>
+                
+                <div class="carousel-inner">
+                    <!-- 默认显示一张图片 -->
+                    <div class="carousel-item">
+                        <img src="https://img.no911happystarfile.dpdns.org/PeopleColumns/lly.jpg" alt="Default Space">
+                    </div>
+                </div>
+                <button class="carousel-control prev">❮</button>
+                <button class="carousel-control next">❯</button>
+            </div>
+
+            <!-- 音乐播放器 -->
+            <div class="music-player">
+
+                <div class="playlist-container">
+                    <div class="playlist-wrapper">
+                        <div class="playlist">
+                            <div class="song" onclick="playSong('song1')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260103.jpg">
+                                <h3>神的女孩</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song2')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026010301.jpg">
+                                <h3>梦开始的地方</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song3')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026010302.jpg">
+                                <h3>相识即序曲</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song4')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026010303.jpg">
+                                <h3>绽放</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song5')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026010304.jpg">
+                                <h3>永不落的星火</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song6')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026010305.jpg">
+                                <h3>爱 回来了</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song7')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260104.jpg">
+                                <h3>璀璨如星的你</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song8')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260113.jpg">
+                                <h3>反方向的你</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song9')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260114.jpg">
+                                <h3>坏坏的男人</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song10')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260114.jpg">
+                                <h3>未完成的歌</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song11')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260114.jpg">
+                                <h3>即兴小曲</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song12')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260119.jpg">
+                                <h3>无尽的尽头</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song13')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260120.jpg">
+                                <h3>请记得我</h3>
+                                <p>西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song14')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260121.jpg">
+                                <h3>让爱放肆张狂</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song15')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260122.jpg">
+                                <h3>嗨歌1</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song16')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260122.jpg">
+                                <h3>嗨歌2</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song17')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260122.jpg">
+                                <h3>嗨歌3</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song18')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026012501.jpg">
+                                <h3>细品1</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song19')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026012501.jpg">
+                                <h3>细品2</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song20')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260121.jpg">
+                                <h3>让爱放肆张狂（续）</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song21')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260127.jpg">
+                                <h3>Know Me Too Well</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song22')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260128.jpg">
+                                <h3>囚爱</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song23')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013101.jpg">
+                                <h3>王者之王</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song24')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013102.jpg">
+                                <h3>你这个倔强的坏女人</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song25')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013103.jpg">
+                                <h3>劲之三部曲</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song26')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020201.jpg">
+                                <h3>待取名1</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song27')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020202.jpg">
+                                <h3>待取名2</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song28')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020202.jpg">
+                                <h3>待取名3</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song29')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020204.jpg">
+                                <h3>待取名4</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song30')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020205.jpg">
+                                <h3>待取名5</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song31')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020206.jpg">
+                                <h3>待取名6</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song32')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020207.jpg">
+                                <h3>待取名7</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song33')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020208.jpg">
+                                <h3>待取名8</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song34')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020209.jpg">
+                                <h3>我爱你对不起</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song35')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260204.jpg">
+                                <h3>宝贝摇篮曲</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song36')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260204.jpg">
+                                <h3>我的宝贝唯一</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song37')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260204.jpg">
+                                <h3>她只是我的妹妹</h3>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song38')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20250704.jpg">
+                                <h3>爱情专属权</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song39')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20250704.jpg">
+                                <h3>镇痛剂</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song40')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20250704.jpg">
+                                <h3>苟活之重生</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song41')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20250909.jpg">
+                                <h3>心愿便利贴</h3>
+                                <p>LLY➕室友</p>
+                            </div>
+                            <div class="song" onclick="playSong('song42')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>他他他（朝鲜）</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song43')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>他他他（朝鲜）</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song44')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>他他他（中文）</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song45')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>when I get old</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song46')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>绮怀</h3>
+                                <p>LLY➕室友</p>
+                            </div>
+                            <div class="song" onclick="playSong('song47')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>人间白首</h3>
+                                <p>室友➕LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song48')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>原点</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song49')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>只若初见</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song50')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>三妻四妾</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song51')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>断钗</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song52')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>星光下的梦想</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song53')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>情深深雨濛濛</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song54')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>恋爱吗姐姐</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song55')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>祝你爱我到天荒地老</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song56')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>wonder woman</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song57')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>昨夜风今宵月</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song58')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122017.jpg">
+                                <h3>over and over again</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song59')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026020206.jpg">
+                                <h3>受伤de小猫</h3>
+                                <p>西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song60')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>我们不是相爱过吗</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song61')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>不要离开</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song62')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>如愿</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song63')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>明月天涯</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song64')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>奇迹再现</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song65')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>为你而来</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song66')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>despacito</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song67')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>告诉桃花不必开</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song68')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>坏女孩</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song69')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>四月的海棠花未眠</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song70')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>淤泥里的花</h3>
+                                <p>LLY（收音1）</p>
+                            </div>
+                            <div class="song" onclick="playSong('song71')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>淤泥里的花</h3>
+                                <p>LLY（收音2）</p>
+                            </div>
+                            <div class="song" onclick="playSong('song72')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>你走</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song73')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>你听不见雨的声音</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song74')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>心愿便利贴</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song75')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>心愿便利贴</h3>
+                                <p>室友</p>
+                            </div>
+                            <div class="song" onclick="playSong('song76')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122017.jpg">
+                                <h3>TOOOOO BUSY</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song77')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>心碎的声音</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song78')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>恋爱百分百</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song79')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>别让爱褪色</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song80')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>小半</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song81')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>离人</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song82')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>再见</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song83')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>九万字</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song84')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>月光</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song85')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>空空如也</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song86')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>抽象告白</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song87')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>遇见</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song88')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>迷人的危险</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song89')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>虚拟</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song90')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>走吗</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song91')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013001.jpg">
+                                <h3>Love you like a song</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song92')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013002.jpg">
+                                <h3>再见的不见的</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song93')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013003.jpg">
+                                <h3>他他他（双语版）</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song94')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013004.jpg">
+                                <h3>姐姐真漂亮</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song95')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026013005.jpg">
+                                <h3>第57次取消发送</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song96')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062601.jpg">
+                                <h3>你想要的</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song97')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062602.jpg">
+                                <h3>壁上观</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song98')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062603.jpg">
+                                <h3>何以歌</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song99')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062604.jpg">
+                                <h3>就是爱你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song100')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062605.jpg">
+                                <h3>别让爱凋落</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song101')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062606.jpg">
+                                <h3>李白</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song102')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062607.jpg">
+                                <h3>公主殿下</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song103')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>STORE BREVI</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song104')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062609.jpg">
+                                <h3>千年</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song105')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062610.jpg">
+                                <h3>美人鱼</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song106')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062611.jpg">
+                                <h3>江上晚风吟</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song107')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>way back home</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song108')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062613.jpg">
+                                <h3>不值得</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song109')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062614.jpg">
+                                <h3>若梦</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song110')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>我的小小奇迹</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song111')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062616.jpg">
+                                <h3>一个备胎而已</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song112')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062617.jpg">
+                                <h3>不甘</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song113')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062618.jpg">
+                                <h3>湮灭</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song114')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062619.jpg">
+                                <h3>夏夜最后的烟火</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song115')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062620.jpg">
+                                <h3>消散对白</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song116')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062621.jpg">
+                                <h3>两难</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song117')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025062622.jpg">
+                                <h3>金玉良缘</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song118')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>stay with me</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song119')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>the way I still love you</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song120')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>锦鲤抄</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song121')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>茶花开了</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song122')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>等不到的等待</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song123')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>处处吻</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song124')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>一剑为红颜</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song125')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>白桦林</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song126')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>最美的颜色</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song127')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>最美的颜色</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song128')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>我们说好的</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song129')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>相思</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song130')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>特别对待</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song131')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>说谎的乌鸦</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song132')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>仙谣</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song133')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>风过谢桃花</h3>
+                                <p>LLY➕室友</p>
+                            </div>
+                            <div class="song" onclick="playSong('song134')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>致爱人</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song135')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>星河叹</h3>
+                                <p>小酒窝➕LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song136')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>洛希极限</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song137')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>座位</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song138')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>未完成的爱</h3>
+                                <p>女神</p>
+                            </div>
+                            <div class="song" onclick="playSong('song139')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260107.jpg">
+                                <h3>同花顺</h3>
+                                <p>LLY（收音1）</p>
+                            </div>
+                            <div class="song" onclick="playSong('song140')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260107.jpg">
+                                <h3>同花顺</h3>
+                                <p>LLY（收音2）</p>
+                            </div>
+                            <div class="song" onclick="playSong('song141')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20251215.jpg">
+                                <h3>心如止水</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song142')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122201.jpg">
+                                <h3>执迷不悟</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song143')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122202.jpg">
+                                <h3>小雨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song144')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122203.jpg">
+                                <h3>我还记得那天</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song145')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122204.jpg">
+                                <h3>白羊</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song146')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122205.jpg">
+                                <h3>处处吻</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song147')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122206.jpg">
+                                <h3>月亮代表我的心</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song148')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122207.jpg">
+                                <h3>我只在乎你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song149')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122301.jpg">
+                                <h3>把耳朵叫醒</h3>
+                                <p>小酒窝</p>
+                            </div>
+                            <div class="song" onclick="playSong('song150')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122302.jpg">
+                                <h3>舍得</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song151')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122303.jpg">
+                                <h3>舍得</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song152')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122304.jpg">
+                                <h3>折断玫瑰</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song153')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122305.jpg">
+                                <h3>이젠안녕</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song154')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122306.jpg">
+                                <h3>体面</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song155')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122307.jpg">
+                                <h3>双鱼座</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song156')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122308.jpg">
+                                <h3>为时已晚</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song157')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122309.jpg">
+                                <h3>别怕我伤心</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song158')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122401.jpg">
+                                <h3>九张机</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song159')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122402.jpg">
+                                <h3>千古</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song160')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122403.jpg">
+                                <h3>爱殇</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song161')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122404.jpg">
+                                <h3>我们的纪念</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song162')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122405.jpg">
+                                <h3>消愁</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song163')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122405.jpg">
+                                <h3>눈 속에 묻힌 이름</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song164')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122406.jpg">
+                                <h3>太晚才明白</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song165')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122407.jpg">
+                                <h3>不染</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song166')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122408.jpg">
+                                <h3>今昔</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song167')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122409.jpg">
+                                <h3>一生等你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song168')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122409.jpg">
+                                <h3>喜欢你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song169')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122410.jpg">
+                                <h3>献天缘</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song170')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122411.jpg">
+                                <h3>麻醉师</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song171')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122412.jpg">
+                                <h3>浪人琵琶</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song172')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>空空如也</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song173')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>贝加尔湖畔</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song174')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>piano</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song175')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>岸边客</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song176')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>起风了</h3>
+                                <p>LLY➕小酒窝➕LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song177')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>无情画</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song178')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>顿啦爱你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song179')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>忆江南</h3>
+                                <p>LLY</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 音频播放器 + 播放模式按钮 -->
+                <div class="audio-player">
+                    <audio id="audioPlayer" controls controlsList="nodownload">
+                        <source id="audioSource" src="" type="audio/mpeg">
+                        您的浏览器不支持音频元素。
+                    </audio>
+                    <!-- 紧凑型播放模式控制 -->
+                    <div class="mode-selector-compact">
+                        <button class="mode-button-compact active" data-mode="order" title="顺序播放">
+                            <svg class="icon-compact" viewBox="0 0 24 24">
+                                <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/>
+                                <path d="M20 18l4-4-4-4v3H7v2h13v3z"/>
+                            </svg>
+                        </button>
+                        <button class="mode-button-compact" data-mode="loop" title="单曲循环">
+                            <svg class="icon-compact" viewBox="0 0 24 24">
+                                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                            </svg>
+                        </button>
+                        <button class="mode-button-compact" data-mode="random" title="随机播放">
+                            <svg class="icon-compact" viewBox="0 0 24 24">
+                                <path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        
+        <!-- 右侧内容 -->
+        <div class="right-content">
+            <!-- 娅粉来信容器 -->
+            <div class="letters-container">
+                <!-- 信封封面 -->
+                <div class="letter-cover" id="letterCover">
+                    <div class="letter-title">娅粉来信</div>
+                    <div class="letter-subtitle">点击查看粉丝来信</div>
+                </div>
+                
+                <!-- 选项界面 -->
+                <div class="letters-options" id="lettersOptions">
+                    <div class="options-header">
+                        <div class="option-bigtitle">娅粉来信</div>
+                        <button class="back-button" onclick="showCover()">返回封面</button>
+                    </div>
+                    <div class="options-list" id="optionsList">
+                        <!-- 选项内容将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <!-- 内容播放区域 -->
+                <div class="content-player" id="contentPlayer">
+                    <div class="player-header">
+                        <div class="player-title" id="playerTitle">内容播放</div>
+                        <div class="player-header-actions">
+                            <button class="view-video-button" onclick="playVideo()">查看完整来信</button>
+                            <button class="close-button" onclick="showOptions()">关闭</button>
+                        </div>
+                    </div>
+                    <div class="player-content" id="playerContent">
+                        <!-- 内容将动态加载 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="letters-container" id="dailySnippetsContainer">
+                <!-- 封面 -->
+                <div class="letter-cover" id="dailyCover">
+                    <div class="letter-title">日常花絮</div>
+                    <div class="letter-subtitle">点击查看生活片段</div>
+                </div>
+                <!-- 选项界面 -->
+                <div class="letters-options" id="dailyOptions">
+                    <div class="options-header">
+                        <div class="option-bigtitle">日常花絮</div>
+                        <button class="back-button" onclick="showDailyCover()">返回封面</button>
+                    </div>
+                    <div class="options-list" id="dailyOptionsList">
+                        <!-- 选项将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <!-- 内容播放区域 -->
+                <div class="content-player" id="dailyPlayer">
+                    <div class="player-header">
+                        <div class="player-title" id="dailyPlayerTitle">视频播放</div>
+                        <div class="player-header-actions">
+                            <button class="close-button" onclick="showDailyOptions()">关闭</button>
+                        </div>
+                    </div>
+                    <div class="player-content" id="dailyPlayerContent">
+                        <!-- 视频将动态加载 -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+     <!-- 底部游戏风格互动组件 -->
+    <div class="history-container" id="historyContainer">
+        <div class="history-trigger" id="historyTrigger">
+            <h2>来时路</h2>
+            <p>点击探索我们的故事</p>
+        </div>
+        
+        <!-- 加载动画容器 -->
+        <div class="loading-container" id="loadingContainer">
+            <div class="loading-text">加载历史中...</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+        </div>
+
+        <!-- 滚动字幕区域 -->
+        <div class="history-content" id="historyContent">
+            <div class="history-marquee" id="historyMarquee">
+                2024.09.23  - 牵个手 - <br>
+                2024.09.25  - 我有一个朋友身高184.5, 现实一次恋爱都没 - <br>
+                2024.10.28  - 三千字检讨男的故事之前被删了再发一遍吧 - <br>
+                2024.10.29  - 西西里里家族是什么意思 - <br>
+                2024.10.31  - 哈哈谢谢我喜欢这个蟑螂虽然只有卷毛有头发 - <br>
+                2024.11.01  - 白衣小哥//许牙医/日常语录专线 - <br>
+                2024.11.08  - 有没有好看的丧尸片 歪个楼 - <br>
+                2024.11.27  - 02 187 酒窝大男孩 男大母单 - <br>
+                2025.01.08  - 我有一个朋友身高184.5, 现实一次恋爱都没 - <br>
+                2025.01.08  - 魅力值灌输中 - <br>
+                2025.01.09  - 当街被大甜妹扒裤子了 - <br>
+                2025.01.09  - 他看上去比较有趣 - <br>
+                2025.01.21  - 一个女生追我朋友没追上又来追我 - <br>
+                2025.01.27  - 怎么辨别对方是不是渣男海王养鱼 - <br>
+                2025.01.31  - 答应我过年睡觉一定要锁门好吗求你们了 - <br>
+                2025.02.01  - 这样相亲也可以, 还能一起挑 - <br>
+                2025.02.01  - 好消息被甜妹要v了坏消息甜妹是漂亮小姨 - <br>
+                2025.02.03  - 我已经长大了是个成年男性 - <br>
+                2025.02.04  - 邻居家小孩叫我LY哥哥LY是我的名字 - <br>
+                2025.02.05  - 帅哥真的会网恋 顶帅也会 - <br>
+                2025.02.06  - 怎么让帅哥主动追你 - <br>
+                2025.02.06  - 让朋友帮搭讪结果他俩谈上了这对吗 - <br>
+                2025.02.06  - 安徽帅哥过完年都会回江浙沪当模子哥 - <br>
+                2025.02.11  - 含“许医生”量百分之零点二 - <br>
+                2025.02.16  - 我妈说我的朋友许牙医比我帅多了 - <br>
+                2025.02.17  - 她摸我腹肌 - <br>
+                2025.02.19  - 让你火🔥 - <br>
+                2025.02.20  - 男生眼中的甜妹 - <br>
+                2025.02.22  - 聊了八百多个一个也没处上 - <br>
+                2025.02.22  - 几百条私信百分之八十都是找许医生 - <br>
+                2025.02.23  - 不儿你说你跟你小妈在一起了这对吗 - <br>
+                2025.02.24  - 我那个又争又抢又盯又防的哥 - <br>
+                2025.02.24  - 正在吃饭室友说他腰带断了里面真空 - <br>
+                2025.02.25  - 网恋了一个女大我很丑不敢见她怎么办🆘 - <br>
+                2025.03.02  - 有谁还记得西西里里家族 - <br>
+                2025.03.05  - 03天蝎又帅又坏又有劲, 左滑看照片 - <br>
+                2025.03.06  - 倘若五个帅哥一起追你 - <br>
+                2025.03.07  - 有个人碎掉了大破防的终于不是我了 - <br>
+                2025.03.09  - 女朋友总生气因为太帅我总被女生搭讪 - <br>
+                2025.03.10  - 回忆闪回 - <br>
+                2025.03.11  - 爱而不得才是常态 - <br>
+                2025.03.12  - 真的别谈抽象男这是警告 - <br>
+                2025.03.13  - 同时暧昧了八十个有点聊不过来了 - <br>
+                2025.03.14  - 开心一下 - <br>
+                2025.03.15  - 又又又又被拉黑了 - <br>
+                2025.03.15  - 问号哥, 一生要强的男人 - <br>
+                2025.03.15  - 谢谢我不喜欢吃面 - <br>
+                2025.03.15  - 跟我一起出门的朋友都会被女生疯狂要v - <br>
+                2025.03.16  - 光着拿外卖 被反锁门外 - <br>
+                2025.03.17  - 你听我解释我老婆是女的我老婆真是女的啊 - <br>
+                2025.03.19  - 贴里出现的人物, 大概梳理了一下人物圈 - <br>
+                2025.03.20  - 男人一旦过了25就是65 - <br>
+                2025.03.20  - 好不容易爬到20楼电梯坏了又给我运回1楼 - <br>
+                2025.03.22  - 这辈子都没想过两个男人会为我吵起来 - <br>
+                2025.03.24  - 卷毛因太帅路上被富婆阿姨看上了？ - <br>
+                2025.03.25  - 他再怎么嘴硬嘴亲起来都是软的 - <br>
+                2025.03.25  - 能笑就是对我抽象搞笑最好的回报了 - <br>
+                2025.03.26  - 帮你们摸了许医生的腹肌可以手感不错 - <br>
+                2025.03.27  - 最近都不要给我发私信了老婆查得紧 - <br>
+                2025.03.27  - 哥们儿你不会是张伟吧 - <br>
+                2025.03.28  - 大家好我是一个抽象男长得有点小帅钱没一点 - <br>
+                2025.03.28  - ? - <br>
+                2025.03.29  - 全员聊天最全的一次，检讨笑死我了 - <br>
+                2025.03.31  - 结识了另外一位牙医朋友肖医生, 有点东西 - <br>
+                2025.03.31  - 我妹让我帮她搭讪蛋糕店帅哥 - <br>
+                2025.04.01  - 那很好了祝你们幸福 我真月老上线是吧 - <br>
+                2025.04.01  - 房东姨又偷偷跟室友说不想努力了就找她 - <br>
+                2025.04.02  - 告诉我大甜妹不是弯的好吗我tm求求了 - <br>
+                2025.04.02  - 以为甜妹要我结果奔着我姐去了这对吗 - <br>
+                2025.04.04  - 我的号养成了好多甜妹点赞点不过来了 - <br>
+                2025.04.05  - 很自卑不敢给网上的甜妹主动发消息 - <br>
+                2025.04.05  - 第一次主动换一辈子的内向 - <br>
+                2025.04.08  - 西西里里的日常有许医生卷毛室友寝室长问号 - <br>
+                2025.04.09  - 要我的妹子转身就进了男厕所 - <br>
+                2025.04.09  - 怎么追帅哥crush干货版 - <br>
+                2025.04.10  - 甜辣妹御姐不要找我了 不然我总见一个爱一个 - <br>
+                2025.04.11  - 要许牙一的女生长得好像刘亦菲 - <br>
+                2025.04.14  - 我爸不要我了 - <br>
+                2025.04.18  - 给crush表白不小心按成了群发 - <br>
+                2025.04.19  - 哥和学长一起出柜了 crush变嫂子了 吃瓜 - <br>
+                2025.04.20  - 和朋友一起捡了个小孩 - <br>
+                2025.04.20  - 西西里里超长日常记录 - <br>
+                2025.04.21  - 只聊我一个帅哥还不行吗别那么贪心 - <br>
+                2025.04.24  - 做我女朋友还是疯狂星期四v我50? - <br>
+                2025.04.28  - 小孩大喊妈妈那里有两个哥哥在亲嘴儿 - <br>
+                2025.04.29  - 要v排队行不行, 哥们儿我先来的 - <br>
+                2025.04.29  - 打篮球脚滑把帅哥裤子扒了 - <br>
+                2025.04.30  - 想当年我也是在托尼老师那里进修过的 - <br>
+                2025.05.02  - 五一网恋奔现她太漂亮了自卑到落荒而逃 - <br>
+                2025.05.03  - 网恋对象长得比现任漂亮怎么办? - <br>
+                2025.05.03  - 带墨镜撞我的女生以为我又聋又瞎又哑巴 - <br>
+                2025.05.06  - 跟许医生一起去98被客人点了 - <br>
+                2025.05.11  - 卷毛专栏提前了 - <br>
+                2025.05.12  - 不认识的小孩一口咬了我的肠 - <br>
+                2025.05.13  - 戒过毒吗小孩 - <br>
+                2025.05.13  - 不小心把室友撞到了一个眼镜帅哥的怀里 - <br>
+                2025.05.17  - 送我姐去拍写真店员对我姐说你老公真帅 - <br>
+                2025.05.18  - 因为我的一句话西装上司爆改清纯男大 - <br>
+                2025.05.19  - 坑朋友穿女装一路红灯被要v无数次 - <br>
+                2025.05.20  - 西西里里祝大家520快乐 - <br>
+                2025.05.21  - 最聪明的属检讨直接卸载了 - <br>
+                2025.05.28  - 他他他 - <br>
+                2025.05.29  - 姐姐真漂亮 - <br>
+                2025.06.04  - 好消息毕业被表白了坏消息他是男的我也是 - <br>
+                2025.06.05  - 这是一个悲伤的故事 - <br>
+                2025.06.08  - 许医生专线加成篇➕西西里里回归篇 - <br>
+                2025.06.14  - 算是解药 - <br>
+                2025.06.15  - 百分八十胜率 - <br>
+                2025.06.16  - 陪哥们奔现他的小娇妻是我亲小姨 - <br>
+                2025.06.16  - 我今年22岁我爸嘴里的我永远都是30的人了 - <br>
+                2025.06.17  - 唱歌大合集 - <br>
+                2025.06.19  - 当哥们被要v的时候我就会凑过去喊姐夫 - <br>
+                2025.06.22  - 我爸被收保护费 我妈美救英雄 - <br>
+                2025.06.22  - 他是我哥亲哥 - <br>
+                2025.06.23  - 睡了两年半的好兄弟告诉我他是女的 - <br>
+                2025.06.23  - 两男在公共厕所抱着啃不知天地为何物 - <br>
+                2025.06.24  - 我妈在马路牙子上捡了一个帅哥回家 - <br>
+                2025.06.25  - 对面女生以为我在亲她 - <br>
+                2025.06.25  - 我妈在马路上认识的帅哥是我姐前男友 - <br>
+                2025.06.25  - 让朋友女装吃情侣套餐结果还是亲嘴合照 - <br>
+                2025.06.26  - 打球甜妹看上我姐了她弟看上我了 - <br>
+                2025.06.27  - 爆爆辣火鸡面被人偷了 人进肛肠医院了 - <br>
+                2025.06.29  - 有情人终成姐弟了 - <br>
+                2025.06.29  - 我真服了我妹拿我跟她同学换了八斤山竹 - <br>
+                2025.06.29  - 女神追一年没追上用哥们照片网恋上了 - <br>
+                2025.06.29  - 第57次取消发送 - <br>
+                2025.06.30  - 两个一样高的男生被我撞的亲一块了 - <br>
+                2025.06.30  - 朋友以为我得绝症了只一味的给我转钱 - <br>
+                2025.07.02  - 🆘我妹好像喜欢上我哥了 - <br>
+                2025.07.04  - 训狗歌 - <br>
+                2025.07.06  - 告诉那桃花不必开 - <br>
+                2025.07.06  - 朋友吃雪糕掉下来一坨鸟屎他舔了上去 - <br>
+                2025.07.08  - 被榴莲刺伤的屁股又被我爸狠拍了一巴掌 - <br>
+                2025.07.11  - 我的屁股又被叉子扎了 - <br>
+                2025.07.11  - 最近发生了一些事, 谢谢大家喜欢看我的贴 - <br>
+                2025.07.12  - 谁tm传的我有痔疮被榴莲刺了 - <br>
+                2025.07.13  - 亲戚家小孩拿点着的香戳我屁股 - <br>
+                2025.07.14  - 忘记关门邻居进来了 - <br>
+                2025.07.14  - 一些人被毕业了 - <br>
+                2025.07.15  - 我爸是185大帅哥 - <br>
+                2025.07.17  - 屁股针扎我被榴莲刺的伤口上了 - <br>
+                2025.07.19  - 跟我姐买鸡被鸡叨了叨完后面叨前面 - <br>
+                2025.07.20  - 奥利奥我只吃饼干我妹说她把夹心舔干净了 - <br>
+                2025.07.20  - 不要再给我发黑丝问哥哥好不好看了 - <br>
+                2025.07.21  - 朋友夸了老板娘一句老板娘就给他免单了 - <br>
+                2025.07.23  - 我表哥的相亲对象是我堂哥的前女友 - <br>
+                2025.07.25  - 🆘我同学要泡我小叔怎么办 - <br>
+                2025.07.26  - 🆘表妹也看上了我的小叔怎么办 - <br>
+                2025.07.27  - 刚剁完辣椒千万不要去上厕所 - <br>
+                2025.07.30  - 打篮球被酷似宋威龙的180帅哥追着要v - <br>
+                2025.07.31  - 被一妹子羽毛球拍戳腚了她说要帮我揉揉 - <br>
+                2025.08.03  - 朋友为了摆脱纠缠说自己整容且养胃 - <br>
+                2025.08.03  - 女友劈腿发小我的追求者找人给他掰弯了 - <br>
+                2025.08.05  - 吃饭不小心坐一花臂大哥腿上了 - <br>
+                2025.08.05  - 她说我玩抽象就玩抽象凭什么还长那么帅 - <br>
+                2025.08.05  - 坐地铁急刹车一口啃了女生的胳膊 - <br>
+                2025.08.09  - 救命, 仙人球扎屁股上拔不下来了 - <br>
+                2025.08.10  - 小奶猫饿了咬上了我的那个 - <br>
+                2025.08.13  - 我爷爷是双胞胎我亲奶奶是我大爷爷前任 - <br>
+                2025.08.15  - 分手后嫁给了前男友的双胞胎弟弟 - <br>
+                2025.08.15  - 我姐说模子哥1200 长得还没我爽 凭什么 - <br>
+                2025.08.16  - 打球把别人的蛋糕坐扁了 - <br>
+                2025.08.17  - crush跟我弟谈了, 我跟crush哥在一起了 - <br>
+                2025.08.18  - 谁懂, 被小孩揪了一小时胸肌和腹肌 - <br>
+                2025.08.19  - 许医生谈恋爱拔了一颗牙送给他女朋友 - <br>
+                2025.08.19  - 网恋奔现对方被我帅跑了, 第二张是照片 - <br>
+                2025.08.21  - 我爸爆改成团播了 我不中了 - <br>
+                2025.08.22  - 唱歌大合集 - <br>
+                2025.08.22  - 掏现金结账掏出来一个内裤和柜员面面相觑 - <br>
+                2025.08.23  - 我姐说没想到有一天我竟然能成为她的情敌 - <br>
+                2025.08.25  - 天塌了 表妹导师以为我是表妹男朋友 - <br>
+                2025.08.26  - 以为好兄弟在被女生强吻拽开后发现不是 - <br>
+                2025.08.27  - 力气太大把椅子做塌了 屁股卡住了 - <br>
+                2025.08.28  - 谢谢大家厚爱 - <br>
+                2025.08.28  - 家政阿姨以为我跟室友是一对磕的忘情 - <br>
+                2025.08.29  - 人家七夕亲嘴 我七夕被抽嘴 - <br>
+                2025.08.31  - 我姐：我弟有腹肌 - <br>
+                2025.09.02  - 一屁股坐在榴莲堆上 - <br>
+                2025.09.03  - ? 这是话吗 - <br>
+                2025.09.03  - 186.7天蝎男消息很多 - <br>
+                2025.09.05  - 我爸的背影让好几个女生过来搭讪 - <br>
+                2025.09.06  - 踢易拉罐精准命中另一个朋友两腿间 - <br>
+                2025.09.06  - 屁股粘在石球上了 动都动不了 - <br>
+                2025.09.07  - 学妹说她和她弟同时看上了我小叔 - <br>
+                2025.09.08  - 从高台阶往下跳 精准骑到了帅哥的头上 - <br>
+                2025.09.08  - 合集2 - <br>
+                2025.09.09  - 要我v的女生好像有男朋友怎么办 - <br>
+                2025.09.09  - 心愿便利贴, 室友合唱版 - <br>
+                2025.09.10  - 朋友喝多了抱着我的大腿喊老婆 - <br>
+                2025.09.12  - 游泳把前面帅哥苦叉子拽下来了 - <br>
+                2025.09.13  - 女朋友结婚了新郎不是我 - <br>
+                2025.09.14  - 网恋对象是发小 - <br>
+                2025.09.15  - 被蛇咬了左屁股蛋跳到了帅哥怀里面 - <br>
+                2025.09.20  - 和牙医朋友吃饭因颜值被免单 - <br>
+                2025.09.24  - 聋哑甜妹主动要我v后发现她竟然是男的 - <br>
+                2025.09.25  - 表妹的手指甲把帅哥的胸肌戳漏了 - <br>
+                2025.09.26  - 搭讪男妈妈后不小心说出了心里话你好大 - <br>
+                2025.09.26  - 合集3 - <br>
+                2025.09.27  - 被十个女生要了上 - <br>
+                2025.09.29  - 好多女生追我好烦恼啊生为帅哥我很抱歉 - <br>
+                2025.09.30  - 抓口红一次抓到 帅的三女生疯狂要我v - <br>
+                2025.10.02  - 猜猜什么歌 - <br>
+                2025.10.04  - 和同学打球被她妹当成情侣喊我嫂子 - <br>
+                2025.10.05  - 把181.9大帅哥戳哭了 - <br>
+                2025.10.05  - 我妹说用我照片网恋了三个男的 - <br>
+                2025.10.06  - 追我的学姐和追我的学妹让她换一个人追 - <br>
+                2025.10.07  - 要我的女生看到我朋友太帅后不理我了 - <br>
+                2025.10.08  - 好听到内个的极品磁性➕男音口耑 - <br>
+                2025.10.09  - 真的很火尧很口耑得磁性极品➕男音 - <br>
+                2025.10.11  - 辣椒面全洒帅哥室友腹肌上了 - <br>
+                2025.10.11  - 当你有个朋友是超级帅哥哪哪都大的大帅哥 - <br>
+                2025.10.12  - 被一女的强吻后发现自己有个双胞胎弟弟 - <br>
+                2025.10.12  - 粉丝作曲词的歌, 抽象告白 - <br>
+                2025.10.13  - 上班第一天被豆橛子毒倒了 - <br>
+                2025.10.14  - 一小孩拉着我跟她妈说 要我做她帅爸爸 - <br>
+                2025.10.16  - 学妹说我最帅她除了我不会再看上别人了 - <br>
+                2025.10.16  - 很内个的口耑 - <br>
+                2025.10.19  - 有我这个巨帅身材巨顶大帅哥天天逗你笑 - <br>
+                2025.10.21  - 后面的你们来唱吧 - <br>
+                2025.10.25  - 这是话吗这个 - <br>
+                2025.10.27  - 跟扣篮的帅哥搭讪的时候让裤子掉了 - <br>
+                2025.10.27  - 合集6 - <br>
+                2025.10.28  - 摘眼镜戴眼镜被同一个女生要了两次 - <br>
+                2025.10.28  - 在公园楼梯坐着吹风一个女生坐我头上了 - <br>
+                2025.10.30  - 严正声明 - <br>
+                2025.11.03  - 合集5 - <br>
+                2025.11.05  - 曾看不起我的初中老师现在让我做他女婿 - <br>
+                2025.11.06  - 看演出被小孩当成他爸一直抱着我大腿掐 - <br>
+                2025.11.07  - 打翻了胶水把老板的臀和椅子黏在一起了 - <br>
+                2025.11.08  - 唱k极品男耑Love you like a song - <br>
+                2025.11.09  - 大雾看不见人走着走着跟人亲上了 - <br>
+                2025.11.09  - 玩密室逃脱大腿肌夹住了帅哥npc的头 - <br>
+                2025.11.11  - 也没什么, 就是一段很日常的西西里里 - <br>
+                2025.11.12  - 女同事问我是不是和帅哥实习生有两腿 - <br>
+                2025.11.12  - 滚烫的烤红薯掉帅哥实习生裤裆了 - <br>
+                2025.11.13  - 来 - <br>
+                2025.11.16  - 搭讪的女生说朋友好容易被搭讪太无趣了 - <br>
+                2025.11.16  - 能不能不亻故 - <br>
+                2025.11.17  - 许医生检讨笑亖我了 西西里里 - <br>
+                2025.11.17  - 同学一次谈了三个帅哥 - <br>
+                2025.11.17  - 走路转了个角被一个大帅哥亲了 - <br>
+                2025.11.18  - 同学谈了三个大帅哥后续 离大谱 - <br>
+                2025.11.19  - 帅气男人不能过度穿搭 - <br>
+                2025.11.20  - 误伤帅哥实习生裤裆他六个姐姐来兴师问罪 - <br>
+                2025.11.20  - 女生套圈套我奶茶上了 要把我领走 - <br>
+                2025.11.22  - 生日快乐 天天快乐 - <br>
+                2025.11.22  - 这弹是粉丝原创歌曲欣赏视听盛宴 - <br>
+                2025.11.22  - 我将把2025.11.22作为我一生的良药 - <br>
+                2025.11.23  - 当我的朋友发现我在做网h后…… - <br>
+                2025.11.25  - baby baby一起下来看雪花 - <br>
+                2025.11.28  - 两个男的坐在我的小车上亲 - <br>
+                2025.11.29  - ➗男音 - <br>
+                2025.11.30  - 搭讪牵狗的帅哥走近一看狗是孩子 - <br>
+                2025.12.03  - 不小心把蓝发帅哥撞进手推车里推走了…… - <br>
+                2025.12.03  - 因为不想我为难 前男友和追求者在一起了 - <br>
+                2025.12.04  - 合集4 - <br>
+                2025.12.04  - 被女同学点了 - <br>
+                2025.12.04  - 因为太帅我姐两个追求者都把我当情敌了 - <br>
+                2025.12.05  - 被撞到帅哥怀里咬住他手里的鸡腿 - <br>
+                2025.12.05  - 低血糖晕倒的几秒选择倒进了帅哥怀里 - <br>
+                2025.12.06  - 戒指掉进帅哥衣服 伸手去掏跟他对视了 - <br>
+                2025.12.07  - 抱我姐被她追求者看到疯狂吃醋说我都上手了 - <br>
+                2025.12.08  - 兔牙不小心啃了大帅哥的胸大肌 - <br>
+                2025.12.09  - 被进错男厕所的女生搭讪要了 - <br>
+                2025.12.09  - 因为真是大帅哥所以奔现被甩了 - <br>
+                2025.12.10  - 你听到了吗口耑 - <br>
+                2025.12.11  - 西西里里男团(bushi) - <br>
+                2025.12.12  - 我妹介绍给男同学的女生看上我了 - <br>
+                2025.12.12  - 帅哥说他衣服上有味道让我闻闻亲了我额头 - <br>
+                2025.12.12  - 哥们别再抄我了 - <br>
+                2025.12.14  - 卷毛男大温柔系 - <br>
+                2025.12.15  - 是不是会担心变成一只野兽 - <br>
+                2025.12.15  - 一年11w米分 - <br>
+                2025.12.16  - 别担心我很ok, 我是lly, 一个抽象博主 - <br>
+                2025.12.16  - 穿大衣吃烤肉被三个女生同时搭讪了 - <br>
+                2025.12.17  - 被大帅哥撞了看清脸以后 怒气转成了花痴 - <br>
+                2025.12.18  - 女且夫不相信我是我姐亲弟 一直把我当情敌 - <br>
+                2025.12.21  - 你听 - <br>
+                2025.12.22  - 被妹子壁咚了 挪了一下位置胸肌碰妹子嘴了 - <br>
+                2025.12.22  - 妹子埋进我胸大肌说 谢谢给她喂乃 - <br>
+                2025.12.22  - 也甘愿 - <br>
+                2025.12.23  - 被大帅哥搭讪借给了他五百块 - <br>
+                2025.12.23  - 很劲 - <br>
+                2025.12.24  - 撞进了帅哥的大衣, 并埋进了伟岸的胸大肌 - <br>
+                2025.12.24  - 高铁戴口罩 女生说帅哥你是不是那个谁 - <br>
+                2025.12.25  - 生日快乐 - <br>
+                2025.12.25  - 电梯打开绊了一脚跪在了帅哥的月退中间 - <br>
+                2025.12.25  - 头回跟大帅哥一起睡有点激动 - <br>
+                2025.12.26  - 小, 叔, 你, 好, 香 - <br>
+                2025.12.26  - #2025小红年度报告#2025怪不一样 - <br>
+                2025.12.26  - 劲道 - <br>
+                2025.12.27  - 和朋友在步行街被当模子哥点了俩人1.5w - <br>
+                2025.12.28  - 你是说你不小心啃到帅哥的甘蔗并亲了一嘴 - <br>
+                2025.12.28  - 坐火车不小心趴两帅哥身上了 - <br>
+                2025.12.29  - 晚上圣诞我看到三个男生亲另一个男生 - <br>
+                2025.12.29  - ( )朋友专线+西西里里 - <br>
+                2025.12.29  - 这次有没有很内个 - <br>
+                2025.12.29  - 被十几个女生当模子哥排队要了 - <br>
+                2025.12.30  - 让朋友帮要帅哥 都谈上了才知道她要错人了 - <br>
+                2025.12.30  - 别抄了别抄了别抄了别抄了别抄了别抄了 - <br>
+                2025.12.30  - 嗯 - <br>
+                2025.12.30  - 好内个 安堆安堆安堆安堆安堆 - <br>
+                2025.12.31  - 崴脚撞到了帅哥一手抓了胸大肌一手掐了他脖 - <br>
+                2025.12.31  - 粤语内个 - <br>
+                2025.12.31  - 有人坐过榴莲仙人掌刺猬吗？我坐过。 - <br>
+                2025.12.31  - 朋友出门被二十几个女生要了 许一生专贴 - <br>
+                2026.01.01  - 新年快乐，新的清晨，新的开始 - <br>
+                2026.01.01  - 近视跨年要了两个帅哥加上发现都是前男友 - <br>
+                2026.01.01  - 学车听到旁边讨论帅哥 仔细一听说的是我 - <br>
+                2026.01.02  - 不小心把帅哥当凳子坐了给人坐趴地上了 - <br>
+                2026.01.02  - 可能有点内个 - <br>
+                2026.01.03  - 迎面差点亲到了一个大帅哥 好可惜就差一点 - <br>
+                2026.01.03  - 给娅米分的 - <br>
+                2026.01.03  - 给你们 给娅米分 给朋友 - <br>
+                2026.01.04  - 帅哥突然怼我怀里了棉花糖沾我们俩一脸 - <br>
+                2026.01.04  - 初遇-相识-深知 - <br>
+                2026.01.05  - 19岁小叔放假了说他在学校某天被要了20次 - <br>
+                2026.01.05  - 我姐对象以为我小叔是我姐追求者 - <br>
+                2026.01.06  - 内个粤语加西西里里 - <br>
+                2026.01.06  - 两个帅哥面对面玩手机走路一抬头亲上了 - <br>
+                2026.01.07  - 帮小叔撕他衣服上的胶结果直接成露背装 - <br>
+                2026.01.07  - 地铁偷看187大帅哥跟他对视了落荒而逃 - <br>
+                2026.01.07  - 怎么又很内个了 - <br>
+                2026.01.08  - 走错屋间躺在了陌生帅哥的身边 他说亲一个 - <br>
+                2026.01.08  - 被当成模子哥的n回 都成模子哥的头牌了 - <br>
+                2026.01.08  - 好心帮帅哥撕裤子上的胶带 把裤子撕烂了 - <br>
+                2026.01.09  - 185大帅哥坐到另一个180帅哥的泡面上了 - <br>
+                2026.01.09  - 个人看法 - <br>
+                2026.01.10  - 看到帅哥爷爷的爱人有胶带 没忍住撕了下来 - <br>
+                2026.01.10  - 出门要了18个安徽帅哥 要完这个要那个 - <br>
+                2026.01.10  - 给你们品一下 - <br>
+                2026.01.10  - 这次真的很内个了 - <br>
+                2026.01.11  - 在奶茶店捡了一个低血米唐的大长帅哥 - <br>
+                2026.01.11  - 不知道 我的身材很内个 - <br>
+                2026.01.12  - 两对情侣 结果男的亲男的 女的亲女的 - <br>
+                2026.01.13  - 反方向的你 - <br>
+                2026.01.14  - 被伴郎看上了吹我脖子怎么办我也是伴郎 - <br>
+                
+                2026.01.14  - 坏坏的男人 - <br>
+                2026.01.14  - 坏坏的男人➕未完成的歌 - <br>
+                2026.01.15  - 安徽地铁坐两个帅哥中间他俩都倚着我睡着了 - <br>
+                2026.01.15  - 发了一张帅照 不到九分钟消息就炸了 - <br>
+                2026.01.15  - 黄毛找人要治我 完了人到了一看是我爸。。 - <br>
+                2026.01.15  - 有人吗 - <br>
+                2026.01.16  - 买包子绊倒了下意识薅住了前面帅哥的头发 - <br>
+                2026.01.16  - 买的糖葫芦粘公司实习生帅哥头发上了 - <br>
+                2026.01.16  - 有点太嗨了 - <br>
+                2026.01.16  - 合集9 - <br>
+                2026.01.17  - 刚当模子被我妹点给她男闺蜜了 - <br>
+                2026.01.17  - 头回收到那么多消息 谢谢大家夸我很帅 - <br>
+                2026.01.18  - 你可能不认识我 但或许刷到过这些 - <br>
+                2026.01.18  - 告白失败了 她说我长得太帅根本不敢谈 - <br>
+                2026.01.18  - 女生颜控所以我整成了帅哥回来她成我小妈了 - <br>
+                2026.01.19  - 泡温泉被陌生大帅哥牵手了还掐我腰 - <br>
+                2026.01.19  - 下雪出溜滑摔倒 一月定坐帅哥背上滑下去了 - <br>
+                2026.01.19  - 让爱放肆张狂 - <br>
+                2026.01.20  - 去相亲被龙凤胎的哥哥看上了 - <br>
+                2026.01.21  - 我的围巾勾住了帅哥的耳钉 - <br>
+                2026.01.21  - 有点太嗨了 - <br>
+                2026.01.21  - 因为长得太帅所以一直被拒绝也一直单身 - <br>
+                2026.01.22  - 长太丑表白把crush吓哭了 她说我恩将仇报 - <br>
+                2026.01.22  - 帮帅哥撕他衣服上的胶结果直接撕成露背装 - <br>
+                2026.01.22  - 我弟和我的crush在一起了 - <br>
+                2026.01.22  - 地铁上被一个女生要四次 她说她脸盲 - <br>
+                2026.01.22  - 那就随便听一下吧 - <br>
+                2026.01.23  - 被男的当成他网恋对象了 张口就喊老公 - <br>
+                2026.01.24  - 去唱k 和模子哥撞衫了 然后又被点了 - <br>
+                2026.01.25  - 给一个姐姐唱了一首歌 给我转了888 - <br>
+                2026.01.25  - 头回被女生搭讪, 竟然是让我把我朋友推给她 - <br>
+                2026.01.25  - 让爱放肆张狂(合集 - <br>
+                
+                2026.01.25  - 因长得太帅搭讪女生被拒绝了 哭了一整晚 - <br>
+                2026.01.25  - 细品吧 - <br>
+                2026.01.26  - 本来去搭讪的结果却跪在了帅哥的面前 - <br>
+                2026.01.26  - 酸奶撒了实习生帅哥一身一脸 不行了好想逃 - <br>
+                2026.01.27  - 地铁上犯困不小心趴帅哥身上了 - <br>
+                2026.01.27  - 戴口罩被一个女生莫名其妙搭讪了六次 - <br>
+                2026.01.27  - Know Me Too Well - <br>
+                2026.01.28  - 陪一个同学相亲 结果女生看上我了 - <br>
+                2026.01.28  - 这个不一样 - <br>
+                2026.01.28  - 被一个大美搭讪了 仔细一看是高中班主任 - <br>
+                2026.01.29  - 我的一个朋友长得很帅 - <br>
+                2026.01.30  - 吹泡泡糖吹泡泡 摔倒亲帅哥脸上了 - <br>
+                2026.01.31  - 被控到了的一首歌 - <br>
+                2026.01.31  - 突然发现我竟然是一个187宽肩窄腰的大帅哥 - <br>
+                2026.01.31  - 你这个倔强的坏女人 歌 - <br>
+                2026.01.31  - 劲之三部曲(歌) - <br>
+                2026.02.01  - 歌合集 就到这里了 - <br>
+                2026.02.02  - 帅哥摔倒下意识去扶 忘了手里端着仙人球 - <br>
+                2026.02.02  - 歌合集 循环播放 - <br>
+                2026.02.02  - 烦 帅到睡不着 - <br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 娅粉来信数据
+        // 可以选择时间？还是分个类？
+        const yafanLetters = [
+            {
+                id: 1,
+                title: "我们一直都在",
+                date: "2025.10.18  @💫缠藤",
+                preview:  `故事的开头是一朵小黄花，故事不会结束，我们为你汇聚一片花海`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251018.mp4"
+            },    
+            {
+                id: 2,
+                title: "是最暖的光",
+                date: "2025.10.19  @願望是玟天要開心",
+                preview:  `继续做那个让世界变有趣的王子吧`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251019.mp4"
+            },
+            {
+                id: 3,
+                title: "关于小鹿",
+                date: "2025.10.22  @粑粑奶昔拥护者",
+                preview: "他像一枚被命运不断抛掷的硬币，一面沾满了生活的泥泞与划痕，但每当面对我们，他总能让印着花朵的那一面朝上",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202510220101.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202510220102.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202510220103.jpg"
+                ]
+            },
+            {
+                id: 4,
+                title: "lly是谁啊？",
+                date: "2025.11.07  @粑粑奶昔拥护者",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251107.mp4"
+            },
+            {
+                id: 5,
+                title: "lly，有属于自己的曙光",
+                date: "2025.11.14  @粑粑奶昔拥护者",
+                preview: `《赠诙郎》
+                    ——以十四韵赠小鹿
+                    瑶台堕玉山，偶染俗尘妒
+                    本怀星月来，欲赠清辉驻
+                    鬼蜮忽成潮，举报湮华素
+                    盗影窃冰魂，假汝名行恶
+                    讼启秋霜凛，剑指虚妄处
+                    琴抚知交暖，歌纾粉丝蹙
+                    虽言铠甲成，谁见深宵泫
+                    犹持朗朗心，戏抛珠玉赴
+                    拈花破愁城，化雨驱霾雾
+                    身立千涛中，守真如初晤
+                    笑涡藏星芒，幽默自天付
+                    任他世路艰，清辉满襟愫
+                    终待九霄鸾，长鸣报云衢
+                    此心皎皎兮，永在光之溯`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251114.mp4"
+            },
+            {
+                id: 6,
+                title: "不被定义",
+                date: "2025.11.16  @粑粑奶昔拥护者",
+                preview: "无题",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251116.mp4"
+            },
+            {
+                id: 7,
+                title: "抽象主包",
+                date: "2025.11.20  @粑粑奶昔拥护者",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251120.mp4"
+            },
+            {
+                id: 8,
+                title: "你好，22岁的lly",
+                date: "2025.11.22  @願望是玟天要開心",
+                preview: `🎶🎶🎶🎶🎶
+                    祝你生日快乐～👏👏👏
+                    祝你生日快乐～👏👏👏
+                    亲爱的lly🎉🎉🎉
+                    祝你生日快乐～👏👏👏👏👏🎉🎉🎉🎉🎉
+                    听到我的歌声了吗？👀👀👀
+                    快闭上眼睛许愿🙏
+                    许好了吗？
+                    快吹🌬️蜡烛吧～🎂🥳
+                    芜湖～！生日快乐！！！`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251122.mp4"
+            },
+            {
+                id: 9,
+                title: "福鹿双至",
+                date: "2025.11.22  @哈哈",
+                preview: `祝顶顶好的小鹿生日快乐！
+                    从10月25号这个想法初具雏形，10月26号写下完整的生日企划、召集大家，再到11月10号呈现第一版成片，11月17号生日视频最终版导出，这个视频的诞生可谓几经波澜，不过幸好，《福鹿双至》此时此刻能被看见。在此特别感谢@幸运号 @粑粑奶昔拥护者（徽草不是👻版）@进击的皮卡丘 @艺waw @uupffall @超级阿姝 @蛋卷米灰 @丸丸丸丸丸辣 @水水很会压AK @俺是李雷 @爱吃鱼丁 @-吐司超好吃- @柚屿 @云汐月 @咕噜呱啦说什么呢给我吃一口（咸桃汽水）@LOVE神尊 @喜欢亚~（lly要开心噢）@缠藤（願lly永遠開心版）@大难临头各自菲 @嗨，你好（lly唯粉版）@疯子与红头巾 @我爱辣斯（见黄子四次版）@佳栩 @兔子魔法师🐰 @简一（没睡醒版）@烤布蕾芝士拉丝叻 @洋柿子派 宝们的配合支持！
+                    因为小鹿我们得以相识，我相信同类相吸，真诚的人吸引真诚的人，散发出去的温暖总会照回自己身上。这段时间你对我们说了太多声谢谢，但我们一起经历了这么多，不是亲人也胜似亲人啦，不用这么客气。请相信你是顶顶顶顶顶顶好的，你做的任何决定我们都支持，所以，坚定地做你自己吧！
+                    `,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112201.mp4"
+            },
+            {
+                id: 10,
+                title: "亲爱的小鹿 欢迎你来到人生中的六点三十六分🎊",
+                date: "2025.11.22  @幸运号",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112202.mp4"
+            },
+            {
+                id: 11,
+                title: "生日happy独白！！！",
+                date: "2025.11.22  @大难临头各自菲",
+                preview: "亲爱的lly，感谢遇见，你的存在让我感到幸运与温暖。从相识到如今，你已融入我的生活，成为我精神的支柱。你的歌声、文字和生活点滴治愈了我，希望你每天都能开心，照顾好自己。生日快乐，永远支持你！！",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220301.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220302.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220303.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220304.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220305.jpg"
+                ]
+            },
+            {
+                id: 12,
+                title: "lly大寿星生日快乐！！！",
+                date: "2025.11.22  @粑粑奶昔拥护者",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220401.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220402.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220403.jpg"
+                ]
+            },
+            {
+                id: 13,
+                title: "💛To全世界超好超帅的lly",
+                date: "2025.11.22  @💫缠藤",
+                preview: `哥生日快乐！
+                希望你以后每天开开心心，万事顺遂，心想事成！生日恰逢小雪❄️，祝你瑞雪兆福，昭昭如愿，岁岁安澜`,
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220501.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220502.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220503.jpg"
+                ]
+            },
+            {
+                id: 14,
+                title: "祝顶顶好顶顶帅的lly生日快乐！",
+                date: "2025.11.22  @喜欢亚~（lly要开心噢）",
+                preview: "一眨眼就到了你的生日了，新的一岁，希望你一切都好，每天都开开心心的，然后，愿所有的快乐，所有的幸福，所有的温馨，所有的好运围绕在你身边，多喜乐，长安宁！！！",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220601.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220602.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220603.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220604.jpg"
+                ]
+            },
+            {
+                id: 15,
+                title: "祝lly生日快乐",
+                date: "2025.11.22  @柚屿",
+                preview: `蛋糕画的有些歪，我想是祝福太满，压的它倾斜了
+                        没想到今天是来xh的七周年！
+                        对小红书未来的期待是小红对lly好亿点！
+                        要和大家一直陪伴向前走
+                        1122是个好日子🎉
+                        “深深铭刻 像今天一样 我会拿出来看 记住今天”
+                        这是幸福的一天`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112207.mp4"
+            },
+            {
+                id: 16,
+                title: "愿你是你，永远自由",
+                date: "2025.11.22  @我爱辣斯（离不开小快乐版）",
+                preview: ``,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112208.mp4"
+            },
+            {
+                id: 17,
+                title: "连空气中的微尘都诉说着对你的思念",
+                date: "2025.11.28  @粑粑奶昔拥护者",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251128.mp4"
+            },
+            {
+                id: 18,
+                title: "遇你，如春水映梨花",
+                date: "2025.11.29  @💫缠藤",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251129.mp4"
+            },
+            {
+                id: 19,
+                title: "记录是一份珍贵的宝藏，不仅仅是lly",
+                date: "2025.12.01  @粑粑奶昔拥护者",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251201.mp4"
+            },
+            {
+                id: 20,
+                title: "在这里，我找了微光与海",
+                date: "2025.12.09  @吐司真好吃🎀",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202512090101.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090102.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090103.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090104.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090105.jpg"
+                ]
+            },
+            {
+                id: 21,
+                title: "lly是最好的抽象博主",
+                date: "2025.12.12  @粑粑奶昔拥护者",
+                preview: `怎么会觉得丢脸呢，抽象也算是有趣的代名词，有趣的灵魂不会感到丢脸，我们搁那叭叭叭叭叭叭，我们跟你一起在抽象一起在玩一起笑，我们都被你感染了，一个来自有趣的人，一个心里有着万里繁空的人，我们都被这个人吸引了，所以，一点都不丢脸，你真的超级好啊！希望lly可以一直开心不要内耗！不对，可以内耗，但是不要过度内耗，不要在不值得事上内耗哦`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251212.mp4"
+            },
+            {
+                id: 22,
+                title: "小鼻嘎lly",
+                date: "2025.12.20  @粑粑奶昔拥护者",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251220.mp4"
+            },
+            {
+                id: 23,
+                title: "时如皎皎月 不管多久远 lly，我们一直都在",
+                date: "2025.12.22  @简一（没睡醒版）",
+                preview: `如果你能静下心来用心的细细了解他，你会发现他分享的生活很有趣，文笔很细腻写的也很生动，很抽象很宠粉很有趣活人感满满。因为，他是底色善良的人，他是真诚有耐心的人，他是有才华又谦虚的人，他和朋友们唱歌都非常的好听，他是可爱又有能力的人，他是会默默把不开心消化努力逗我们笑的人，他是无偿回报不带货每天坚持给我们带来快乐的人，他是温柔有着很强共情能力的人，他是非常有礼貌经常感谢粉丝的人，他是温暖且无私的人，他是三观正可靠贴心的人，他是我们的宝藏，我们互为良药`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251222.mp4"
+            },
+            {
+                id: 24,
+                title: "起码我们记得",
+                date: "2025.12.31  @进击的皮卡丘",
+                preview: `这个视频是NO.911的部分帖子合集，从12月21日进行统计，直至12月31日才正式画上句号。视频里的照片有的是根据头像来的，有的找不到头像或者头像太过于模糊的我就找别的图来代替了。💛
+                    其实lly发的帖子不止这些，这一年给我们带来的欢乐也不止于此。看似平常的分享，藏着最真实的鲜活与可爱，一次次驱散疲惫与沉闷，留下满屏的笑意与温暖。这些美好都留存在我们的记忆里，为了多留存一些温暖，便诞生了这则视频，愿它能成为我们珍藏回忆的小小载体。💕
+                    最后，祝所有人新年好好的，都能平平安安、稳稳当当地走向幸福，永远被温暖包围，被爱包围，也被好运一直偏爱。💜
+                    想对你说：其实有时候我们在屏幕前发出的赞叹是孤单的，身边很少人可以分享，但是你的礼物像一座桥，也像是一个看得见、摸得着的小家，让我们看到，原来这份喜欢可以如此具象化、如此璀璨，谢谢你带来这份美好的礼物。
+                    此岁今年，顺绥冬安。`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025123101.mp4"
+            },
+            {
+                id: 25,
+                title: "新年快乐，不止你我",
+                date: "2026.01.01  @粑粑奶昔拥护者",
+                preview: `他用一种近乎物理定律般的本能，将嘴上推开的责任，在行动中牢牢地履行和收回，否定只是假动作，兑现才是目的地。lly，新年快乐，多幸运遇见了你，多幸运，遇见了你们`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260101.mp4"
+            },
+            {
+                id: 26,
+                title: "我们2026年见🎊",
+                date: "2026.01.01  @幸运号",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010102.mp4"
+            },
+            {
+                id: 27,
+                title: "我想你值得被所有美好包围",
+                date: "2026.01.01  @柚屿",
+                preview: `他说“911是夜空，你们是星光，是照亮911的星光”
+                        夜空用深邃的墨蓝为星光铺展画布，让每一缕微光都有被看见的底气；星光以细碎的闪烁为夜空缀满呼吸，让寂静的夜幕有了流动的温度。夜空与星光的互相成就，是一场温柔的双向奔赴。夜空是星光的“日记本”，星光是夜空珍视的温柔诗行，彼此让平凡有了意义。
+                        遇见lly和大家，是一件很幸运的事。lly和娅粉们同等的重要，大家用各自的色彩为这个大家庭添上温暖与活力。如果说lly是那个为我们编织幸福的人，那大家就是把这份幸福轻轻捧在手心、传递和延续的使者，让快乐温暖在彼此心底慢慢发芽、小树成林。
+                        “爱源自我看见你”而在这片小宇宙中，“我”永远能被“看见”，遇见你们让我的世界都变成了一个装满梦境的万花筒，每转一下，都是惊喜的暖光。
+                        遇见你们很高兴lly&娅粉 感谢相遇
+                        感谢片尾新年快乐祝福的宝宝们🥰
+                        ㊗️lly 娅粉 西西里里家人朋友们，大家新年快乐！！！
+                        我们会像这首歌样的没有尽头一直一起走
+                        那么，朋友们，我们明天见！`,
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010103.mp4"
+            },
+            {
+                id: 28,
+                title: "你不必完美，只需存在，就足够被爱",
+                date: "2026.01.03  @吐司真好吃🎀",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202601030101.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601030102.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601030103.jpg"
+                ]
+            }
+        ];
+
+        // DOM元素
+        const letterCover = document.getElementById('letterCover');
+        const lettersOptions = document.getElementById('lettersOptions');
+        const contentPlayer = document.getElementById('contentPlayer');
+        const optionsList = document.getElementById('optionsList');
+        const playerContent = document.getElementById('playerContent');
+        const playerTitle = document.getElementById('playerTitle');
+        let currentLetter = null;
+
+        // 显示信封封面
+        function showCover() {
+            lettersOptions.classList.remove('active');
+            contentPlayer.classList.remove('active');
+            letterCover.style.display = 'flex';
+        }
+
+        // 显示选项界面
+        function showOptions() {
+            const videoPlayer = playerContent.querySelector('.video-player');
+            if (videoPlayer) {
+                videoPlayer.pause();
+                videoPlayer.currentTime = 0;
+            }
+            
+            letterCover.style.display = 'none';
+            contentPlayer.classList.remove('active');
+            lettersOptions.classList.add('active');
+            currentLetter = null;
+        }
+
+        // 显示娅粉有话说的预览界面
+        // 修改 showPreview 函数
+        function showPreview(letter) {
+            currentLetter = letter;
+            lettersOptions.classList.remove('active');
+            contentPlayer.classList.add('active');
+            // 预览界面时，标题固定为“娅粉有话说”
+            document.getElementById('playerTitle').textContent = '娅粉有话说';
+
+            playerContent.innerHTML = '';
+
+            const previewContainer = document.createElement('div');
+            previewContainer.className = 'preview-container';
+
+            // 移除了底部按钮区域，功能已移至右上角
+            previewContainer.innerHTML = `
+                <div class="preview-header">
+                    <h3>${letter.title}</h3>
+                    <div class="preview-date">${letter.date}</div>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-write">${letter.preview}</div>
+                </div>
+            `;
+
+            playerContent.appendChild(previewContainer);
+
+            // 关键修改：更新播放界面头部按钮 - 预览界面时显示“查看视频”和“关闭”
+            const playerHeaderActions = document.querySelector('.player-header-actions');
+            if (playerHeaderActions) {
+                playerHeaderActions.innerHTML = `
+                    <button class="view-video-button" onclick="playVideo()">查看完整来信</button>
+                    <button class="close-button" onclick="showOptions()">关闭</button>
+                `;
+            }
+        }
+
+        // 更新播放界面头部按钮（预览界面）
+        function updatePlayerHeaderForPreview() {
+            const playerHeader = document.querySelector('.player-header');
+            if (playerHeader) {
+                playerHeader.innerHTML = `
+                    <div class="player-title" id="playerTitle">娅粉有话说</div>
+                    <div class="player-header-actions">
+                        <button class="close-button" onclick="showOptions()">关闭</button>
+                    </div>
+                `;
+            }
+        }
+
+        // 直接播放视频
+        function playVideo() {
+            if (!currentLetter) return;
+            
+            playerContent.innerHTML = '';
+            
+            if (currentLetter.type === 'video') {
+                const video = document.createElement('video');
+                video.className = 'video-player';
+                video.src = currentLetter.content;
+                video.controls = true;
+                video.autoplay = true;
+                video.controlsList = 'nodownload nofullscreen'; // 禁用下载和全屏按钮
+                playerContent.appendChild(video);
+                
+                // 更新播放界面标题为视频标题
+                document.getElementById('playerTitle').textContent = currentLetter.title;
+                
+                // 更新播放界面按钮 - 播放视频时只显示关闭按钮
+                updatePlayerHeaderForVideo();
+                
+            } else if (currentLetter.type === 'image') {
+                // 图片播放逻辑 - 新增对数组的判断
+                document.getElementById('playerTitle').textContent = currentLetter.title;
+                updatePlayerHeaderForVideo(); // 播放界面只显示“关闭”
+
+                // 判断 content 是字符串（单图）还是数组（多图轮播）
+                if (Array.isArray(currentLetter.content) && currentLetter.content.length > 1) {
+                    // 多张图片 -> 创建轮播图
+                    createImageCarousel(currentLetter.content);
+                } else {
+                    // 单张图片 -> 沿用原来的简单展示
+                    const imgUrl = Array.isArray(currentLetter.content) ? currentLetter.content[0] : currentLetter.content;
+                    const img = document.createElement('img');
+                    img.className = 'image-player';
+                    img.src = imgUrl;
+                    img.alt = currentLetter.title;
+                    playerContent.appendChild(img);
+                }
+            }
+        }
+
+        // 创建图片轮播组件
+        function createImageCarousel(imageUrls) {
+            // 1. 创建轮播容器
+            const carouselContainer = document.createElement('div');
+            carouselContainer.className = 'image-carousel-container';
+
+            // 2. 创建轮播轨道，包含所有图片
+            const carouselTrack = document.createElement('div');
+            carouselTrack.className = 'carousel-track';
+            carouselTrack.innerHTML = imageUrls.map(url => `
+                <div class="carousel-slide">
+                    <img src="${url}" alt="轮播图片" loading="lazy">
+                </div>
+            `).join('');
+
+            // 3. 创建左右箭头控制器
+            const prevButton = document.createElement('button');
+            prevButton.className = 'carousel-button carousel-button-prev';
+            prevButton.innerHTML = '&lsaquo;'; // 左箭头符号
+            prevButton.setAttribute('aria-label', '上一张图片');
+
+            const nextButton = document.createElement('button');
+            nextButton.className = 'carousel-button carousel-button-next';
+            nextButton.innerHTML = '&rsaquo;'; // 右箭头符号
+            nextButton.setAttribute('aria-label', '下一张图片');
+
+            // 4. 创建指示器（小圆点）
+            const indicatorsContainer = document.createElement('div');
+            indicatorsContainer.className = 'carousel-indicators';
+            indicatorsContainer.innerHTML = imageUrls.map((_, index) => `
+                <button class="indicator ${index === 0 ? 'active' : ''}" data-index="${index}" aria-label="跳转到第 ${index + 1} 张图片"></button>
+            `).join('');
+
+            // 5. 组装所有部件
+            carouselContainer.appendChild(carouselTrack);
+            carouselContainer.appendChild(prevButton);
+            carouselContainer.appendChild(nextButton);
+            carouselContainer.appendChild(indicatorsContainer);
+
+            // 6. 将轮播容器添加到主内容区
+            playerContent.appendChild(carouselContainer);
+
+            // 7. 初始化轮播状态
+            let currentSlideIndex = 0;
+            const slides = carouselTrack.querySelectorAll('.carousel-slide');
+            const totalSlides = slides.length;
+            const indicators = indicatorsContainer.querySelectorAll('.indicator');
+
+            // 8. 定义更新轮播位置的函数
+            function updateCarousel() {
+                // 移动轨道
+                const offset = -currentSlideIndex * 100;
+                carouselTrack.style.transform = `translateX(${offset}%)`;
+
+                // 更新指示器状态
+                indicators.forEach((indicator, idx) => {
+                    indicator.classList.toggle('active', idx === currentSlideIndex);
+                });
+            }
+
+            // 9. 绑定箭头按钮事件
+            prevButton.addEventListener('click', () => {
+                currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+                updateCarousel();
+            });
+
+            nextButton.addEventListener('click', () => {
+                currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+                updateCarousel();
+            });
+
+            // 10. 绑定指示器点击事件
+            indicators.forEach(indicator => {
+                indicator.addEventListener('click', () => {
+                    const index = parseInt(indicator.getAttribute('data-index'));
+                    if (index !== currentSlideIndex) {
+                        currentSlideIndex = index;
+                        updateCarousel();
+                    }
+                });
+            });
+
+            // 11. 可选：添加键盘支持（左右方向键）
+            document.addEventListener('keydown', function handleKeydown(e) {
+                if (!carouselContainer.parentNode) {
+                    // 如果轮播图已从DOM移除，则清理事件监听
+                    document.removeEventListener('keydown', handleKeydown);
+                    return;
+                }
+                if (e.key === 'ArrowLeft') {
+                    prevButton.click();
+                } else if (e.key === 'ArrowRight') {
+                    nextButton.click();
+                }
+            });
+
+            // 12. 可选：添加触摸滑动支持（用于移动设备）
+            let startX = 0;
+            let isDragging = false;
+
+            carouselTrack.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isDragging = true;
+                carouselTrack.style.transition = 'none'; // 拖动时取消动画
+            }, { passive: true });
+
+            carouselTrack.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.touches[0].clientX;
+                const walk = x - startX;
+                // 实时跟随手指移动轨道（可限制最大移动距离）
+                const offset = -currentSlideIndex * 100 + (walk / carouselTrack.offsetWidth) * 100;
+                carouselTrack.style.transform = `translateX(${offset}%)`;
+            }, { passive: false });
+
+            carouselTrack.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                carouselTrack.style.transition = 'transform 0.5s ease-in-out'; // 恢复动画
+
+                const endX = e.changedTouches[0].clientX;
+                const diff = startX - endX;
+                const threshold = 50; // 滑动阈值，超过此值才切换
+
+                if (diff > threshold && currentSlideIndex < totalSlides - 1) {
+                    // 向左滑，看下一张
+                    nextButton.click();
+                } else if (diff < -threshold && currentSlideIndex > 0) {
+                    // 向右滑，看上一张
+                    prevButton.click();
+                } else {
+                    // 滑动距离不足，回弹到当前图片
+                    updateCarousel();
+                }
+            });
+
+            // 初始更新一次
+            updateCarousel();
+        }
+
+        // 更新播放界面头部按钮（视频播放界面）
+        function updatePlayerHeaderForVideo() {
+            const playerHeaderActions = document.querySelector('.player-header-actions');
+            if (playerHeaderActions) {
+                playerHeaderActions.innerHTML = '<button class="close-button" onclick="showOptions()">关闭</button>';
+            }
+        }
+
+        // 处理选项点击
+        function showContent(letterId) {
+            const letter = yafanLetters.find(item => item.id === letterId);
+            if (!letter) return;
+            
+            if (letter.preview && letter.preview.trim() !== '') {
+                // 有预览内容，显示预览界面
+                showPreview(letter);
+            } else {
+                // 没有预览内容，直接播放视频或展示图片
+                // 修复：正确设置当前信件
+                currentLetter = letter;
+                lettersOptions.classList.remove('active');
+                contentPlayer.classList.add('active');
+                playerTitle.textContent = letter.title;
+                playVideo();
+            }
+        }
+
+        // 初始化选项列表
+        function initOptionsList() {
+            optionsList.innerHTML = '';
+            yafanLetters.forEach(letter => {
+                const optionItem = document.createElement('div');
+                optionItem.className = 'option-item';
+                optionItem.onclick = () => showContent(letter.id);
+                
+                optionItem.innerHTML = `
+                    <div class="option-title">${letter.title}</div>
+                    <div class="option-date">${letter.date}</div>
+                `;
+                
+                optionsList.appendChild(optionItem);
+            });
+        }
+
+        // 事件监听
+        letterCover.addEventListener('click', function() {
+            letterCover.style.display = 'none';
+            lettersOptions.classList.add('active');
+        });
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initOptionsList();
+        });
+
+        
+        // 图片数据源
+        const imageSources = {
+            default: [
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/lly.jpg'
+            ],
+            xixilili: [
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/shiyou.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/xiaojiantao.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/xuyisheng.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/wenhao.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/juanmao.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/qinshizhang.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/hunxuege.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/heyouduixiang.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/nageshui.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/erge.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/xixilili/songlaoshi.jpg',
+            ],
+            relatives: [
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/relatives/sy_sis.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/relatives/xinxin.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/relatives/xiaoshu.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/relatives/xiaojiuwo.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/relatives/xiaoge.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/relatives/lutingxiao.jpg'
+            ],
+            friends: [
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/cuncao.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/ganshen.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/guoer.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/kuohao.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/shuangbaotai.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/wangerya.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/xiaoyisheng.jpg'
+            ]
+        };
+
+        // 当前显示的图片源
+        let currentImageSource = 'default';
+        let carouselIndex = 0;
+        const carouselInner = document.querySelector('.carousel-inner');
+        
+        // 切换图片源
+        function changeImageSource() {
+            const select = document.getElementById('imageSourceSelect');
+            currentImageSource = select.value;
+            updateCarouselItems();
+            carouselIndex = 0;
+            updateCarousel();
+        }
+        
+        // 更新轮播项
+        function updateCarouselItems() {
+            carouselInner.innerHTML = '';
+            imageSources[currentImageSource].forEach(src => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.innerHTML = `<img src="${src}" alt="${currentImageSource} image">`;
+                carouselInner.appendChild(item);
+            });
+        }
+        
+        // 更新轮播位置
+        function updateCarousel() {
+            carouselInner.style.transform = `translateX(-${carouselIndex * 100}%)`;
+        }
+        
+        // 初始化轮播
+        updateCarouselItems();
+        
+        // 轮播控制
+        document.querySelector('.carousel-control.prev').addEventListener('click', () => {
+            carouselIndex = (carouselIndex - 1 + imageSources[currentImageSource].length) % imageSources[currentImageSource].length;
+            updateCarousel();
+        });
+        
+        document.querySelector('.carousel-control.next').addEventListener('click', () => {
+            carouselIndex = (carouselIndex + 1) % imageSources[currentImageSource].length;
+            updateCarousel();
+        });
+        
+        // 自动轮播
+        setInterval(() => {
+            carouselIndex = (carouselIndex + 1) % imageSources[currentImageSource].length;
+            updateCarousel();
+        }, 100000);
+        
+        // 音乐播放功能
+        const songs = {
+            song1: 'https://img.no911happystarfile.dpdns.org/Song/20260103.mp3',
+            song2: 'https://img.no911happystarfile.dpdns.org/Song/2026010301.mp3',
+            song3: 'https://img.no911happystarfile.dpdns.org/Song/2026010302.mp3',
+            song4: 'https://img.no911happystarfile.dpdns.org/Song/2026010303.mp3',
+            song5: 'https://img.no911happystarfile.dpdns.org/Song/2026010304.mp3',
+            song6: 'https://img.no911happystarfile.dpdns.org/Song/2026010305.mp3',
+            song7: 'https://img.no911happystarfile.dpdns.org/Song/20260104.mp3',
+            song8: 'https://img.no911happystarfile.dpdns.org/Song/20260113.mp3',
+            song9: 'https://img.no911happystarfile.dpdns.org/Song/2026011401.mp3',
+            song10: 'https://img.no911happystarfile.dpdns.org/Song/2026011402.mp3',
+            song11: 'https://img.no911happystarfile.dpdns.org/Song/20260115.mp3',
+            song12: 'https://img.no911happystarfile.dpdns.org/Song/20260119.mp3',
+            song13: 'https://img.no911happystarfile.dpdns.org/Song/20260121.mp3',
+            song14: 'https://img.no911happystarfile.dpdns.org/Song/2026012201.mp3',
+            song15: 'https://img.no911happystarfile.dpdns.org/Song/2026012202.mp3',
+            song16: 'https://img.no911happystarfile.dpdns.org/Song/2026012203.mp3',
+            song17: 'https://img.no911happystarfile.dpdns.org/Song/20260120.mp3',
+            song18: 'https://img.no911happystarfile.dpdns.org/Song/2026012501.mp3',
+            song19: 'https://img.no911happystarfile.dpdns.org/Song/2026012502.mp3',
+            song20: 'https://img.no911happystarfile.dpdns.org/Song/2026012503.mp3',
+            song21: 'https://img.no911happystarfile.dpdns.org/Song/20260127.mp3',
+            song22: 'https://img.no911happystarfile.dpdns.org/Song/20260128.mp3',
+            song23: 'https://img.no911happystarfile.dpdns.org/Song/2026013101.mp3',
+            song24: 'https://img.no911happystarfile.dpdns.org/Song/2026013102.mp3',
+            song25: 'https://img.no911happystarfile.dpdns.org/Song/2026013103.mp3',
+            song26: 'https://img.no911happystarfile.dpdns.org/Song/2026020201.mp3',
+            song27: 'https://img.no911happystarfile.dpdns.org/Song/2026020202.mp3',
+            song28: 'https://img.no911happystarfile.dpdns.org/Song/2026020203.mp3',
+            song29: 'https://img.no911happystarfile.dpdns.org/Song/2026020204.mp3',
+            song30: 'https://img.no911happystarfile.dpdns.org/Song/2026020205.mp3',
+            song31: 'https://img.no911happystarfile.dpdns.org/Song/2026020206.mp3',
+            song32: 'https://img.no911happystarfile.dpdns.org/Song/2026020207.mp3',
+            song33: 'https://img.no911happystarfile.dpdns.org/Song/2026020208.mp3',
+            song34: 'https://img.no911happystarfile.dpdns.org/Song/2026020209.mp3',
+            song35: 'https://img.no911happystarfile.dpdns.org/Song/2026020401.mp3',
+            song36: 'https://img.no911happystarfile.dpdns.org/Song/2026020402.mp3',
+            song37: 'https://img.no911happystarfile.dpdns.org/Song/2026020403.mp3',
+            song38: 'https://img.no911happystarfile.dpdns.org/Song/2025070401.mp3',
+            song39: 'https://img.no911happystarfile.dpdns.org/Song/2025070402.mp3',
+            song40: 'https://img.no911happystarfile.dpdns.org/Song/2025070403.mp3',
+            song41: 'https://img.no911happystarfile.dpdns.org/Song/20250909.mp3',
+            song42: 'https://img.no911happystarfile.dpdns.org/Song/2025122001.mp3',
+            song43: 'https://img.no911happystarfile.dpdns.org/Song/2025122002.mp3',
+            song44: 'https://img.no911happystarfile.dpdns.org/Song/2025122003.mp3',
+            song45: 'https://img.no911happystarfile.dpdns.org/Song/2025122004.mp3',
+            song46: 'https://img.no911happystarfile.dpdns.org/Song/2025122005.mp3',
+            song47: 'https://img.no911happystarfile.dpdns.org/Song/2025122006.mp3',
+            song48: 'https://img.no911happystarfile.dpdns.org/Song/2025122007.mp3',
+            song49: 'https://img.no911happystarfile.dpdns.org/Song/2025122008.mp3',
+            song50: 'https://img.no911happystarfile.dpdns.org/Song/2025122009.mp3',
+            song51: 'https://img.no911happystarfile.dpdns.org/Song/2025122010.mp3',
+            song52: 'https://img.no911happystarfile.dpdns.org/Song/2025122011.mp3',
+            song53: 'https://img.no911happystarfile.dpdns.org/Song/2025122012.mp3',
+            song54: 'https://img.no911happystarfile.dpdns.org/Song/2025122013.mp3',
+            song55: 'https://img.no911happystarfile.dpdns.org/Song/2025122014.mp3',
+            song56: 'https://img.no911happystarfile.dpdns.org/Song/2025122015.mp3',
+            song57: 'https://img.no911happystarfile.dpdns.org/Song/2025122016.mp3',
+            song58: 'https://img.no911happystarfile.dpdns.org/Song/2025122017.mp3',
+            song59: 'https://img.no911happystarfile.dpdns.org/Song/20260206.mp3',
+            song60: 'https://img.no911happystarfile.dpdns.org/Song/2025123001.mp3',
+            song61: 'https://img.no911happystarfile.dpdns.org/Song/2025123002.mp3',
+            song62: 'https://img.no911happystarfile.dpdns.org/Song/2025123003.mp3',
+            song63: 'https://img.no911happystarfile.dpdns.org/Song/2025123004.mp3',
+            song64: 'https://img.no911happystarfile.dpdns.org/Song/2025123005.mp3',
+            song65: 'https://img.no911happystarfile.dpdns.org/Song/2025123006.mp3',
+            song66: 'https://img.no911happystarfile.dpdns.org/Song/2025123007.mp3',
+            song67: 'https://img.no911happystarfile.dpdns.org/Song/2025123008.mp3',
+            song68: 'https://img.no911happystarfile.dpdns.org/Song/2025123009.mp3',
+            song69: 'https://img.no911happystarfile.dpdns.org/Song/2025123010.mp3',
+            song70: 'https://img.no911happystarfile.dpdns.org/Song/2025123011.mp3',
+            song71: 'https://img.no911happystarfile.dpdns.org/Song/2025123012.mp3',
+            song72: 'https://img.no911happystarfile.dpdns.org/Song/2025123013.mp3',
+            song73: 'https://img.no911happystarfile.dpdns.org/Song/2025123014.mp3',
+            song74: 'https://img.no911happystarfile.dpdns.org/Song/2025123015.mp3',
+            song75: 'https://img.no911happystarfile.dpdns.org/Song/2025123016.mp3',
+            song76: 'https://img.no911happystarfile.dpdns.org/Song/2025123017.mp3',
+            song77: 'https://img.no911happystarfile.dpdns.org/Song/2025123018.mp3',
+            song78: 'https://img.no911happystarfile.dpdns.org/Song/2025123019.mp3',
+            song79: 'https://img.no911happystarfile.dpdns.org/Song/2025123020.mp3',
+            song80: 'https://img.no911happystarfile.dpdns.org/Song/2025123021.mp3',
+            song81: 'https://img.no911happystarfile.dpdns.org/Song/2025123022.mp3',
+            song82: 'https://img.no911happystarfile.dpdns.org/Song/2025123023.mp3',
+            song83: 'https://img.no911happystarfile.dpdns.org/Song/2025123024.mp3',
+            song84: 'https://img.no911happystarfile.dpdns.org/Song/2025123025.mp3',
+            song85: 'https://img.no911happystarfile.dpdns.org/Song/2025123026.mp3',
+            song86: 'https://img.no911happystarfile.dpdns.org/Song/2025123027.mp3',
+            song87: 'https://img.no911happystarfile.dpdns.org/Song/2025123028.mp3',
+            song88: 'https://img.no911happystarfile.dpdns.org/Song/2025123029.mp3',
+            song89: 'https://img.no911happystarfile.dpdns.org/Song/2025123030.mp3',
+            song90: 'https://img.no911happystarfile.dpdns.org/Song/2025123031.mp3',
+            song91: 'https://img.no911happystarfile.dpdns.org/Song/2026013001.mp3',
+            song92: 'https://img.no911happystarfile.dpdns.org/Song/2026013002.mp3',
+            song93: 'https://img.no911happystarfile.dpdns.org/Song/2026013003.mp3',
+            song94: 'https://img.no911happystarfile.dpdns.org/Song/2026013004.mp3',
+            song95: 'https://img.no911happystarfile.dpdns.org/Song/2026013005.mp3',
+            song96: 'https://img.no911happystarfile.dpdns.org/Song/2025062601.mp3',
+            song97: 'https://img.no911happystarfile.dpdns.org/Song/2025062602.mp3',
+            song98: 'https://img.no911happystarfile.dpdns.org/Song/2025062603.mp3',
+            song99: 'https://img.no911happystarfile.dpdns.org/Song/2025062604.mp3',
+            song100: 'https://img.no911happystarfile.dpdns.org/Song/2025062605.mp3',
+            song101: 'https://img.no911happystarfile.dpdns.org/Song/2025062606.mp3',
+            song102: 'https://img.no911happystarfile.dpdns.org/Song/2025062607.mp3',
+            song103: 'https://img.no911happystarfile.dpdns.org/Song/2025062608.mp3',
+            song104: 'https://img.no911happystarfile.dpdns.org/Song/2025062609.mp3',
+            song105: 'https://img.no911happystarfile.dpdns.org/Song/2025062610.mp3',
+            song106: 'https://img.no911happystarfile.dpdns.org/Song/2025062611.mp3',
+            song107: 'https://img.no911happystarfile.dpdns.org/Song/2025062612.mp3',
+            song108: 'https://img.no911happystarfile.dpdns.org/Song/2025062613.mp3',
+            song109: 'https://img.no911happystarfile.dpdns.org/Song/2025062614.mp3',
+            song110: 'https://img.no911happystarfile.dpdns.org/Song/2025062615.mp3',
+            song111: 'https://img.no911happystarfile.dpdns.org/Song/2025062616.mp3',
+            song112: 'https://img.no911happystarfile.dpdns.org/Song/2025062617.mp3',
+            song113: 'https://img.no911happystarfile.dpdns.org/Song/2025062618.mp3',
+            song114: 'https://img.no911happystarfile.dpdns.org/Song/2025062619.mp3',
+            song115: 'https://img.no911happystarfile.dpdns.org/Song/2025062620.mp3',
+            song116: 'https://img.no911happystarfile.dpdns.org/Song/2025062621.mp3',
+            song117: 'https://img.no911happystarfile.dpdns.org/Song/2025062622.mp3',
+            song118: 'https://img.no911happystarfile.dpdns.org/Song/2025122101.mp3',
+            song119: 'https://img.no911happystarfile.dpdns.org/Song/2025122102.mp3',
+            song120: 'https://img.no911happystarfile.dpdns.org/Song/2025122103.mp3',
+            song121: 'https://img.no911happystarfile.dpdns.org/Song/2025122104.mp3',
+            song122: 'https://img.no911happystarfile.dpdns.org/Song/2025122105.mp3',
+            song123: 'https://img.no911happystarfile.dpdns.org/Song/2025122106.mp3',
+            song124: 'https://img.no911happystarfile.dpdns.org/Song/2025122107.mp3',
+            song125: 'https://img.no911happystarfile.dpdns.org/Song/2025122108.mp3',
+            song126: 'https://img.no911happystarfile.dpdns.org/Song/2025122109.mp3',
+            song127: 'https://img.no911happystarfile.dpdns.org/Song/2025122110.mp3',
+            song128: 'https://img.no911happystarfile.dpdns.org/Song/2025122111.mp3',
+            song129: 'https://img.no911happystarfile.dpdns.org/Song/2025122112.mp3',
+            song130: 'https://img.no911happystarfile.dpdns.org/Song/2025122113.mp3',
+            song131: 'https://img.no911happystarfile.dpdns.org/Song/2026011601.mp3',
+            song132: 'https://img.no911happystarfile.dpdns.org/Song/2026011602.mp3',
+            song133: 'https://img.no911happystarfile.dpdns.org/Song/2026011603.mp3',
+            song134: 'https://img.no911happystarfile.dpdns.org/Song/2026011604.mp3',
+            song135: 'https://img.no911happystarfile.dpdns.org/Song/2026011605.mp3',
+            song136: 'https://img.no911happystarfile.dpdns.org/Song/2026011606.mp3',
+            song137: 'https://img.no911happystarfile.dpdns.org/Song/2026011607.mp3',
+            song138: 'https://img.no911happystarfile.dpdns.org/Song/2026011608.mp3',
+            song139: 'https://img.no911happystarfile.dpdns.org/Song/2026010701.mp3',
+            song140: 'https://img.no911happystarfile.dpdns.org/Song/2026010702.mp3',
+            song141: 'https://img.no911happystarfile.dpdns.org/Song/20251215.mp3',
+            song142: 'https://img.no911happystarfile.dpdns.org/Song/2025122201.mp3',
+            song143: 'https://img.no911happystarfile.dpdns.org/Song/2025122202.mp3',
+            song144: 'https://img.no911happystarfile.dpdns.org/Song/2025122203.mp3',
+            song145: 'https://img.no911happystarfile.dpdns.org/Song/2025122204.mp3',
+            song146: 'https://img.no911happystarfile.dpdns.org/Song/2025122205.mp3',
+            song147: 'https://img.no911happystarfile.dpdns.org/Song/2025122206.mp3',
+            song148: 'https://img.no911happystarfile.dpdns.org/Song/2025122207.mp3',
+            song149: 'https://img.no911happystarfile.dpdns.org/Song/2025122301.mp3',
+            song150: 'https://img.no911happystarfile.dpdns.org/Song/2025122302.mp3',
+            song151: 'https://img.no911happystarfile.dpdns.org/Song/2025122303.mp3',
+            song152: 'https://img.no911happystarfile.dpdns.org/Song/2025122304.mp3',
+            song153: 'https://img.no911happystarfile.dpdns.org/Song/2025122305.mp3',
+            song154: 'https://img.no911happystarfile.dpdns.org/Song/2025122306.mp3',
+            song155: 'https://img.no911happystarfile.dpdns.org/Song/2025122307.mp3',
+            song156: 'https://img.no911happystarfile.dpdns.org/Song/2025122308.mp3',
+            song157: 'https://img.no911happystarfile.dpdns.org/Song/2025122309.mp3',
+            song158: 'https://img.no911happystarfile.dpdns.org/Song/2025122401.mp3',
+            song159: 'https://img.no911happystarfile.dpdns.org/Song/2025122402.mp3',
+            song160: 'https://img.no911happystarfile.dpdns.org/Song/2025122403.mp3',
+            song161: 'https://img.no911happystarfile.dpdns.org/Song/2025122404.mp3',
+            song162: 'https://img.no911happystarfile.dpdns.org/Song/2025122405.mp3',
+            song163: 'https://img.no911happystarfile.dpdns.org/Song/2025122406.mp3',
+            song164: 'https://img.no911happystarfile.dpdns.org/Song/2025122407.mp3',
+            song165: 'https://img.no911happystarfile.dpdns.org/Song/2025122408.mp3',
+            song166: 'https://img.no911happystarfile.dpdns.org/Song/2025122409.mp3',
+            song167: 'https://img.no911happystarfile.dpdns.org/Song/2025122410.mp3',
+            song168: 'https://img.no911happystarfile.dpdns.org/Song/2025122411.mp3',
+            song169: 'https://img.no911happystarfile.dpdns.org/Song/2025122412.mp3',
+            song170: 'https://img.no911happystarfile.dpdns.org/Song/2025122413.mp3',
+            song171: 'https://img.no911happystarfile.dpdns.org/Song/2025122414.mp3',
+            song172: 'https://img.no911happystarfile.dpdns.org/Song/2026010801.mp3',
+            song173: 'https://img.no911happystarfile.dpdns.org/Song/2026010802.mp3',
+            song174: 'https://img.no911happystarfile.dpdns.org/Song/2026010803.mp3',
+            song175: 'https://img.no911happystarfile.dpdns.org/Song/2026010804.mp3',
+            song176: 'https://img.no911happystarfile.dpdns.org/Song/2026010805.mp3',
+            song177: 'https://img.no911happystarfile.dpdns.org/Song/2026010806.mp3',
+            song178: 'https://img.no911happystarfile.dpdns.org/Song/2026010807.mp3',
+            song179: 'https://img.no911happystarfile.dpdns.org/Song/2026010808.mp3',
+        };
+        
+        const songTitles = [
+            "神的女孩", "梦开始的地方", "相识即序曲", "绽放", "永不落的星火", "爱 回来了", "璀璨如星的你", "反方向的你", "坏坏的男人", "未完成的歌", "即兴小曲",
+            "无尽的尽头", "让爱放肆张狂", "嗨歌1", "嗨歌2", "嗨歌3", "请记得我", "细品1", "细品2", "让爱放肆张狂（续）", "Know Me Too Well", "囚爱",
+            "王者之王", "你这个倔强的坏女人", "劲之三部曲", "待取名1", "待取名2", "待取名3", "待取名4", "待取名5", "待取名6", "待取名7", "待取名8",
+            "我爱你对不起", "宝贝摇篮曲", "我的宝贝唯一", "她只是我的妹妹", "爱情专属权", "镇痛剂", "苟活之重生", "心愿便利贴", "他他他（朝鲜）", "他他他（朝鲜）",
+            "他他他（中文）", "when I get old", "绮怀", "人间白首", "原点", "只若初见", "三妻四妾", "断钗", "星光下的梦想", "情深深雨濛濛", "恋爱吗姐姐",
+            "祝你爱我到天荒地老", "wonder woman", "昨夜风今宵月", "over and over again", "我们不是相爱过吗", "不要离开", "如愿", "明月天涯", "奇迹再现",
+            "为你而来", "despacito", "告诉桃花不必开", "坏女孩", "四点的海棠花未眠", "淤泥里的花", "淤泥里的花", "你走", "你听不见雨的声音", "心愿便利贴",
+            "心愿便利贴", "TO0000 BUSY", "心碎的声音", "恋爱百分百", "别让爱褪色", "小半", "离人", "再见", "九万字", "月光", "空空如也", "抽象告白", "遇见",
+            "迷人的危险", "虚拟", "走马", "Love you like a song", "再见的不见的", "他他他(双语版)", "姐姐真漂亮", "第57次取消发送", "你想要的", "壁上观", "何以歌",
+            "就是爱你", "别让爱凋落", "李白", "公主殿下", "STORE BREVI", "千年", "美人鱼", "江上晚风吟", "way back home", "不值得", "若梦", "我的小小奇迹", "一个备胎而已",
+            "不甘", "湮灭", "夏夜最后的烟火", "消散对白", "两难", "金玉良缘", "stay with me", "the way I still love you", "锦鲤抄", "茶花开了", "等不到的等待",
+            "处处吻", "一剑为红颜", "白桦林", "最美的颜色", "玫瑰枯萎在窗台", "我们说好的", "相思", "特别对待", "说谎的乌鸦", "仙谣", "风过谢桃花", "致爱人", "星河叹",
+            "洛希极限", "座位", "未完成的爱", "同花顺", "同花顺", "心如止水", "执迷不悟", "小雨", "我还记得那天", "白羊", "处处吻", "月亮代表我的心", "我只在乎你",
+            "把耳朵叫醒", "舍得", "说散就散", "折断玫瑰", "이젠안녕", "体面", "双鱼座", "为时已晚", "别怕我伤心", "九张机", "千古", "爱殇", "我们的纪念", "消愁",
+            "눈 속에 묻힌 이름", "太晚才明白", "太晚才明白", "今昔", "一生等你", "喜欢你", "献天缘", "麻醉师", "浪人琵琶", "空空如也", "贝加尔湖畔", "piano", "岸边客",
+            "起风了", "无情画", "顿啦爱你", "忆江南"
+        ];
+
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioSource = document.getElementById('audioSource');
+
+        // 播放状态
+        let currentSongIndex = 0;
+        let currentMode = 'order'; // order, loop, random
+        let playHistory = [];
+        let availableSongs = [...Array(songTitles.length).keys()];
+
+        // 播放指定歌曲
+        function playSong(songId, index) {
+            // 更新当前歌曲索引
+            currentSongIndex = index;
+            
+            audioSource.src = songs[songId];
+            audioPlayer.load();
+            
+            // 添加加载完成后的播放
+            audioPlayer.oncanplaythrough = function() {
+                audioPlayer.play().catch(error => {
+                    console.log('自动播放被阻止，需要用户交互');
+                });
+            };
+
+            // 高亮当前播放的歌曲
+            document.querySelectorAll('.song').forEach((song, idx) => {
+                if (idx === index) {
+                    song.style.background = 'rgba(255, 255, 255, 0.4)';
+                    song.style.border = '2px solid #ff6b6b';
+                } else {
+                    song.style.background = 'rgba(255, 255, 255, 0.2)';
+                    song.style.border = 'none';
+                }
+            });
+
+            // 记录播放历史
+            if (!playHistory.includes(index)) {
+                playHistory.push(index);
+            }
+        }
+
+        // 切换到下一首歌
+        function playNextSong() {
+            let nextIndex;
+
+            switch (currentMode) {
+                case 'order':
+                    // 顺序播放：播放下一首，如果到最后一首则停止
+                    nextIndex = (currentSongIndex + 1) % songTitles.length;
+                    break;
+
+                case 'loop':
+                    // 单曲循环：重复播放当前歌曲
+                    nextIndex = currentSongIndex;
+                    break;
+
+                case 'random':
+                    // 随机播放
+                    if (availableSongs.length === 0) {
+                        availableSongs = [...Array(songTitles.length).keys()];
+                    }
+                    const randomIndex = Math.floor(Math.random() * availableSongs.length);
+                    nextIndex = availableSongs[randomIndex];
+                    availableSongs.splice(randomIndex, 1);
+                    break;
+            }
+
+            // 播放选中的歌曲
+            const songKeys = Object.keys(songs);
+            if (songKeys[nextIndex]) {
+                playSong(songKeys[nextIndex], nextIndex);
+            }
+        }
+
+        // 切换播放模式
+        function switchMode(mode) {
+            currentMode = mode;
+
+            // 更新按钮状态
+            document.querySelectorAll('.mode-button-compact').forEach(button => {
+                button.classList.toggle('active', button.getAttribute('data-mode') === mode);
+            });
+
+            // 重置播放历史（随机模式下）
+            if (mode === 'random') {
+                availableSongs = [...Array(songTitles.length).keys()];
+                // 移除当前正在播放的歌曲
+                const currentIndex = availableSongs.indexOf(currentSongIndex);
+                if (currentIndex > -1) {
+                    availableSongs.splice(currentIndex, 1);
+                }
+            }
+            
+            console.log('切换到模式:', mode);
+        }
+
+        // 修复：正确绑定模式按钮点击事件
+        document.addEventListener('DOMContentLoaded', function() {
+            // 绑定模式按钮点击事件
+            document.querySelectorAll('.mode-button-compact').forEach(button => {
+                button.addEventListener('click', function() {
+                    const mode = this.getAttribute('data-mode');
+                    switchMode(mode);
+                });
+            });
+
+            // 绑定歌曲点击事件
+            document.querySelectorAll('.song').forEach((song, index) => {
+                song.addEventListener('click', function() {
+                    const songKeys = Object.keys(songs);
+                    playSong(songKeys[index], index);
+                });
+            });
+        });
+
+        // 修复：监听音频播放结束事件
+        audioPlayer.addEventListener('ended', function() {
+            console.log('歌曲播放结束，当前模式:', currentMode);
+            playNextSong();
+        });
+
+        // 修复：添加时间更新监听，用于调试
+        audioPlayer.addEventListener('timeupdate', function() {
+            // 可以在这里添加进度更新逻辑
+        });
+
+        // 默认播放第一首歌
+        setTimeout(() => {
+            playSong('song1', 0);
+            // 设置默认模式为顺序播放
+            switchMode('order');
+        }, 10);
+
+        // ================== 日常花絮功能 ==================
+        // 日常花絮数据 (示例，请替换为您的实际视频数据)
+        const dailySnippets = [
+            {
+                id: 1,
+                title: "三个帅哥",
+                date: "2026.02.08",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/DailySnippets/20260208.mp4" // 示例URL
+            },
+            {
+                id: 2,
+                title: "快递把我毁了",
+                date: "2026.02.09",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/DailySnippets/20260209.mp4" // 示例URL
+            },
+            {
+                id: 3,
+                title: "当你有个爱说废话的朋友",
+                date: "2026.02.10",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/DailySnippets/20260210.mp4" // 示例URL
+            },
+            // ... 可以添加更多日常花絮
+        ];
+
+        // 获取日常花絮的DOM元素
+        const dailyCover = document.getElementById('dailyCover');
+        const dailyOptions = document.getElementById('dailyOptions');
+        const dailyPlayer = document.getElementById('dailyPlayer');
+        const dailyOptionsList = document.getElementById('dailyOptionsList');
+        const dailyPlayerContent = document.getElementById('dailyPlayerContent');
+        const dailyPlayerTitle = document.getElementById('dailyPlayerTitle');
+        let currentDailySnippet = null;
+
+        // 显示日常花絮封面
+        function showDailyCover() {
+            dailyOptions.classList.remove('active');
+            dailyPlayer.classList.remove('active');
+            dailyCover.style.display = 'flex';
+        }
+
+        // 显示日常花絮选项
+        function showDailyOptions() {
+            const videoPlayer = dailyPlayerContent.querySelector('.video-player');
+            if (videoPlayer) {
+                videoPlayer.pause();
+                videoPlayer.currentTime = 0;
+            }
+            dailyCover.style.display = 'none';
+            dailyPlayer.classList.remove('active');
+            dailyOptions.classList.add('active');
+            currentDailySnippet = null;
+        }
+
+        // 播放日常花絮视频 (点击选项直接播放，无预览)
+        function playDailySnippet(snippetId) {
+            const snippet = dailySnippets.find(item => item.id === snippetId);
+            if (!snippet) return;
+            
+            currentDailySnippet = snippet;
+            dailyOptions.classList.remove('active');
+            dailyPlayer.classList.add('active');
+            dailyPlayerTitle.textContent = snippet.title;
+            
+            dailyPlayerContent.innerHTML = '';
+            
+            if (snippet.type === 'video') {
+                const video = document.createElement('video');
+                video.className = 'video-player';
+                video.src = snippet.content;
+                video.controls = true;
+                video.autoplay = true;
+                video.controlsList = 'nodownload nofullscreen';
+                dailyPlayerContent.appendChild(video);
+            }
+            // 可以添加对图片类型的支持
+        }
+
+        // 初始化日常花絮选项列表
+        function initDailyOptionsList() {
+            dailyOptionsList.innerHTML = '';
+            dailySnippets.forEach(snippet => {
+                const optionItem = document.createElement('div');
+                optionItem.className = 'option-item';
+                // 点击直接播放
+                optionItem.onclick = () => playDailySnippet(snippet.id);
+                
+                optionItem.innerHTML = `
+                    <div class="option-title">${snippet.title}</div>
+                    <div class="option-date">${snippet.date}</div>
+                `;
+                
+                dailyOptionsList.appendChild(optionItem);
+            });
+        }
+
+        // 绑定日常花絮封面点击事件
+        dailyCover.addEventListener('click', function() {
+            dailyCover.style.display = 'none';
+            dailyOptions.classList.add('active');
+        });
+
+        // 页面加载完成后初始化日常花絮
+        document.addEventListener('DOMContentLoaded', function() {
+            initDailyOptionsList(); // 初始化选项列表
+        });
+
+        // 来时路互动功能
+        document.getElementById('historyTrigger').addEventListener('click', function() {
+            const container = document.getElementById('historyContainer');
+            const trigger = document.getElementById('historyTrigger');
+            const loadingContainer = document.getElementById('loadingContainer');
+            const loadingProgress = document.getElementById('loadingProgress');
+            const content = document.getElementById('historyContent');
+            const marquee = document.getElementById('historyMarquee');
+            
+            // 隐藏触发按钮
+            trigger.style.display = 'none';
+            
+            // 显示加载动画
+            loadingContainer.classList.add('active');
+            
+            // 模拟加载进度
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // 加载完成后隐藏加载动画，显示内容
+                    setTimeout(() => {
+                        loadingContainer.classList.remove('active');
+                        content.classList.add('active');
+                        marquee.classList.add('scrolling');
+                        
+                        // ****** 修改这里：删除旧的setTimeout，改用事件监听 ******
+                        // 监听动画结束事件
+                        marquee.addEventListener('animationend', function handler() {
+                            // 动画结束后，移除滚动类，添加最终类，并更新内容
+                            marquee.classList.remove('scrolling');
+                            marquee.classList.add('final');
+                            marquee.innerHTML = `
+                                <div class="final-text">我亲爱的宝贝朋友</div>
+                                <div class="final-subtext">我们未完待续</div>
+                            `;
+                            // 移除事件监听器，防止重复执行
+                            marquee.removeEventListener('animationend', handler);
+                        }, 243000);
+                        
+                    }, 300); // 这个是加载完成后显示内容的短暂延迟，保持300毫秒即可
+                }
+                loadingProgress.style.width = progress + '%';
+            }, 100);
+        });
+
+    
+    </script>
+
+
+    
+</body>
+</html>
