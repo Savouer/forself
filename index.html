@@ -144,7 +144,7 @@
         
         .header-title {
             position: relative;
-            top: 2.5vh;
+            top: 3vh;
             left: 0;
             width: 100%;
             text-align: center;
@@ -165,8 +165,26 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: url('https://img.no911happystarfile.dpdns.org/01.jpg') no-repeat center center;
-            background-size: cover;
+            
+            /* 1. 设置黑色背景，确保空白区域是黑色的 */
+            background-color: #000;
+            
+            /* 2. 图片路径保持不变 */
+            background-image: url('https://img.no911happystarfile.dpdns.org/01.jpg');
+            
+            /* 3. 不重复，且居中显示 */
+            background-repeat: no-repeat;
+            background-position: center center;
+            
+            /* 4. 【核心修改】使用 contain 确保图片完整显示（不裁切） */
+            background-size: contain;
+            
+            /* 5. 【核心修改】利用 padding 和 content-box 限制图片只占 90% */
+            /* 上下各留 5vh，左右各留 5vw，剩下的中间区域就是 90% */
+            padding: 5vh 5vw; 
+            background-origin: content-box; /* 让背景图仅在 padding 内部显示 */
+            box-sizing: border-box; /* 确保 padding 不会撑大容器 */
+            
             opacity: 0;
             z-index: 998;
             animation: imageFade 7s ease-in-out forwards;
@@ -264,6 +282,14 @@
         /* 激活状态 */
         .show-fireworks #bgOverlay { opacity: 1; }
         .show-fireworks #fireworksCanvas { display: block; }
+        /* 当烟花开启时，暂时关闭下层高耗能的滤镜 [cite: 59, 111, 196] */
+        .show-fireworks .music-player, 
+        .show-fireworks .letters-options, 
+        .show-fireworks .content-player,
+        .show-fireworks .letters-container {
+            backdrop-filter: none !important;
+            text-shadow: none !important;
+        }
 
         /* 烟花文字容器 */
         #fireworkMessage {
@@ -291,12 +317,12 @@
 
         /* 天蝎座容器 (右上角) */
         #scorpiusContainer {
-            position: fixed;
-            top: 10px;
-            right: 10px;
+            position: absolute;
+            top: 2%;
+            right: 5%;
             /* 稍微加大一点容器宽高，作为点击感应区 */
-            width: 400px; 
-            height: 500px;
+            width: 250px; 
+            height: 250px;
             z-index: 100;
             transform: scale(0.4);
             transform-origin: top right;
@@ -326,13 +352,17 @@
         }   
         
         /* 主要内容区 */
-        /* 修改 .content 容器 */
+        /* 1. 优化主容器：统一间距 */
         .content {
             display: flex;
-            min-height: 95vh;
-            padding: 8vh 4vw 2vh; /* 改为视窗单位 */
-            flex-wrap: wrap; /* 允许在小屏幕上换行 */
-            gap: 2vw; /* 添加间距，使用视窗单位 */
+            /* 保证内容至少撑满屏幕扣除顶部标题的高度 */
+            min-height: 90vh; 
+            padding: 10vh 4vw 4vh; /* 顶部留出空间给标题 */
+            flex-wrap: wrap;
+            gap: 2rem; /* 使用 rem 替代 vw/vh 间距，更稳定 */
+            /* 【核心修改】改为 stretch，让左右两列高度自动拉齐 */
+            align-items: flex-start;
+            box-sizing: border-box;
         }
 
         /* 在小屏幕上改为垂直排列 */
@@ -343,32 +373,40 @@
             }
         }
 
-        /* 左侧整体容器 */
-        .letters-container {
-            flex: 1;
+        /* 2. 统一左右两列的容器逻辑 */
+        .letters-container,
+        .right-content {
+            flex: 1; /* 左右平分宽度 */
             display: flex;
-            position: relative;
             flex-direction: column;
-            margin-top: 0; /* 移除负边距 */
-            gap: 2vh; /* 使用视窗单位 */
-            min-width: 300px; /* 设置最小宽度 */
+            gap: 2rem; /* 模块之间的垂直间距 */
+            min-width: 320px; /* 防止在极窄屏幕上压扁 */
+            /* 关键：移除所有的 margin-top 负值和固定像素值 */
+            margin: 0 !important; 
         }
 
-
-        /* 图片轮播 */
-        /* 修改 .carousel 容器 */
+        /* 3. 修复左侧轮播图的布局 */
         .carousel {
             width: 100%;
-            height: 60vh; /* 改为视窗高度百分比 */
-            max-height: 750px; /* 保留最大高度限制 */
-            min-height: 600px; /* 设置最小高度 */
+    
+            /* 【核心修改】高度统一为 60vh，与其他三个模块保持一致 */
+            height: 70vh;
+            min-height: 400px;
+            max-height: 800px;
+            
+            /* 移除之前的比例限制，改用固定响应式高度 */
+            aspect-ratio: auto; 
+            margin: 0;
+            
+            background: #262626;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            
+            /* 布局保持不变 */
+            display: flex;
+            flex-direction: column;
             position: relative;
             overflow: hidden;
-            border-radius: 10px;
-            margin-top: 420px; /* 移除负边距 */
-            background: #262626;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            flex: 1; /* 允许弹性伸缩 */
         }
 
         /* 在小屏幕上调整高度 */
@@ -468,17 +506,28 @@
             box-shadow: 0 0 5px rgba(255, 107, 0, 0.7);
         }
 
-        /* 音乐播放器 */
+        /* 4. 修复左侧音乐播放器 */
         .music-player {
             width: 100%;
-            height: 60vh; /* 改为视窗高度百分比 */
-            max-height: 440px; /* 保留最大高度限制 */
-            min-height: 340px; /* 设置最小高度 */
+    
+            /* 【核心修改】将高度改为与右侧模块一致的响应式高度 */
+            height: 30vh; 
+            min-height: 400px;
+            max-height: 800px;
+            
+            /* 保持原有的外观样式 */
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
-            padding: 8px;
+            padding: 20px; /* 给整个播放器留出内边距 */
             backdrop-filter: blur(5px);
-            position: relative; /* 容器设为相对定位 */
+            
+            /* 保持 Flex 布局，确保内部内容能自动撑开或对齐 */
+            display: flex;
+            flex-direction: column;
+            
+            /* 防止圆角溢出 */
+            overflow: hidden;
+            box-sizing: border-box;
         }
         
         .music-player h2 {
@@ -487,48 +536,44 @@
         }
         
         .playlist-container {
+            flex: 1; /* 【关键】占据剩余所有高度 */
+            height: 0; /* 配合flex:1使用，防止被内容撑破 */
             width: 100%;
-            overflow-x: auto;
-            position: relative;
-            /* 新增：占据剩余的主要空间 */
-            flex: 1;
-            /* 移除其可能自带的padding/margin */
-            margin: 0;
-            padding: 0;
+            overflow: hidden; 
+            margin: 10px 0; /* 上下留点间距 */
         }
         
         .playlist-wrapper {
-            position: relative;
+            height: 100%; /* 撑满父容器 */
             width: 100%;
-            overflow-x: auto; /* 必须存在 */
+            overflow-x: auto; /* 允许横向滚动 */
+            overflow-y: hidden; /* 禁止纵向滚动 */
+            
+                    /* 增加平滑滚动体验 */
             scroll-behavior: smooth;
-            /* 新增：明确隐藏纵向滚动条，并定义滚动条样式 */
-            overflow-y: hidden;
-            /* 确保没有额外内边距占用空间 */
-            padding: 0;
-            margin: 0;
+            
+            /* 确保内部内容不会因为滚动条出现而错位 */
+            display: flex;
+            flex-direction: column;
         }
 
         /* 可选：美化滚动条 */
         .playlist-wrapper::-webkit-scrollbar {
-            height: 6px;
+            height: 8px;
         }
+
         .playlist-wrapper::-webkit-scrollbar-thumb {
             background: rgba(255, 107, 107, 0.6);
-            border-radius: 3px;
+            border-radius: 4px;
         }
         
         .playlist {
-            position: relative;
             display: flex;
-            gap: 1vw; /* 大幅减少歌曲项之间的水平间隙 */
-            min-width: max-content;
-            transition: transform 0.5s ease;
-            padding: 0.5vh 0.5vw; /* 大幅减少播放列表区域的内边距 */
-            flex-wrap: nowrap;
-            /* 确保高度不超出容器 */
-            align-items: center;
-            min-height: 0;
+            flex-wrap: nowrap; /* 【关键】强制横向排列，不换行 */
+            height: 100%;      /* 高度撑满 */
+            gap: 20px;         /* 卡片之间的间距 */
+            padding: 0 10px;   /* 左右留一点余地 */
+            align-items: center; /* 垂直居中 */
         }
         
         .playlist::-webkit-scrollbar {
@@ -541,18 +586,27 @@
         }
         
         .song {
-            position: relative;
-            width: clamp(140px, 14vw, 160px); /* 略微调小每个歌曲项的宽度 */
-            /* 关键：移除或大幅减少外边距，使用上方的gap控制水平间距 */
-            margin: 0 0 0.5vh 0; /* 只保留很小的下边距 */
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 1vh 0.8vw; /* 大幅减少歌曲项内部的内边距 */
-            text-align: center;
-            cursor: pointer;
+            /* 【核心】高度设为 100% (或者 90% 留点白) */
+            height: 95%; 
+            
+            /* 【核心】宽度设为 auto，由内部图片撑开 */
+            width: auto; 
+            min-width: auto; /* 覆盖之前的固定宽度 */
+            
+            /* 布局 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 内部内容垂直居中 */
+            align-items: center;
+            
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px;
+            margin: 0;
+            
+            /* 保持宽高比，防止太扁或太细，也可以去掉由图片决定 */
+            aspect-ratio: 3/4; 
             transition: all 0.3s ease;
-            flex-shrink: 0;
-            display: inline-block;
         }
 
         /* 在小屏幕上调整歌曲项 */
@@ -569,27 +623,35 @@
         }
         
         .song img {
-            position: relative;
-            width: 100%;
-            height: 140px; /* 调小图片固定高度 */
+            /* 【核心】高度占据卡片的大部分空间 */
+            height: 75%; 
+            
+            /* 【核心】宽度自动，保持图片比例 */
+            width: auto; 
+            
+            /* 强制保持正方形封面，或用 cover 填满 */
+            aspect-ratio: 1/1; 
             object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 8px; /* 减少图片与标题的间距 */
+            
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
                 
         .song h3 {
-            position: relative;
-            font-size: 0.9rem; /* 略微调小标题字体 */
-            margin-bottom: 3px;
-            line-height: 1.2;
+            font-size: 1rem;
+            margin: 0;
+            width: 100%;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
                 
         .song p {
-            position: relative;
-            font-size: 0.75rem; /* 略微调小描述字体 */
-            opacity: 0.7;
-            line-height: 1.2;
-            margin: 0;
+            font-size: 0.8rem;
+            margin: 5px 0 0 0;
+            opacity: 0.8;
         }
                 
         .audio-player {
@@ -717,41 +779,13 @@
             }
         }
 
-        
-        /* 右侧内容 */
-        .right-content {
-            flex: 1;
-            display: flex;
-            position: relative;
-            flex-direction: column;
-            margin-top: -35px; /* 移除负边距 */
-            gap: 2vh; /* 使用视窗单位 */
-            min-width: 300px; /* 设置最小宽度 */
-        }
-
-        /* 右侧区域 - 娅粉来信 */
-        .letters-container {
-            flex: 1;
-            padding: 2vh 2vw;
-            position: relative;
-            height: auto; /* 改为自动高度 */
-            min-height: 450px; /* 设置最小高度 */
-            max-height: 500px; /* 设置最大高度 */
-            width: 100%;
-            margin-top: 0;
-            margin-right: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
         /* 信封封面 - 黑色系风格 */
         .letter-cover {
             width: 100%;
-            height: 50vh; /* 改为视窗高度 */
-            min-height: 450px; /* 保留最小高度 */
-            max-height: 550px; /* 设置最大高度 */
+            height: 60vh; /* 与播放器高度保持一致 */
+            min-height: 400px;
+            max-height: 800px;
+            margin: 0; /* 移除可能的边距 */
             background: linear-gradient(135deg, #1a1a1a, #333333);
             border-radius: 10px;
             display: flex;
@@ -823,62 +857,76 @@
             z-index: 1;
         }
 
-
-        /* 选项界面 */
-        .letters-options {
-            width: 100%;
-            height: 50vh; /* 改为视窗高度 */
-            min-height: 450px; /* 保留最小高度 */
-            max-height: 550px; /* 设置最大高度 */
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
-            display: none;
-            flex-direction: column;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .letters-options.active {
-            display: flex;
-        }
-
-        .options-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            font-size: 0.9rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .back-button {
+        /* --- 5. 统一按钮尺寸 --- */
+        .back-button,
+        .close-button,
+        .view-video-button {
             background: rgba(255, 107, 107, 0.8);
             border: none;
             color: white;
-            padding: 8px 15px;
+            /* 统一内边距 */
+            padding: 0 15px; 
+            /* 统一高度 */
+            height: 36px; 
             border-radius: 5px;
             cursor: pointer;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .back-button:hover {
+        .back-button:hover,
+        .close-button:hover,
+        .view-video-button:hover {
             background: rgba(255, 107, 107, 1);
-            transform: translateX(-3px);
+            transform: translateY(-2px);
         }
 
-        .options-list {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 10px;
+        /* --- 6. 内容区域自适应 --- */
+        .options-list{
+            flex: 1; /* 占满剩余高度 */
+            overflow-y: auto; /* 允许滚动 */
+            
+            /* 移除多余的 padding，因为父容器已经有了 */
+            padding: 0; 
+            /* 给滚动条右侧留一点点空隙，防止贴太紧 */
+            padding-right: 5px; 
         }
 
-        .options-list::-webkit-scrollbar {
+        .player-content{
+            flex: 1; /* 占满剩余高度 */
+            width: 100%; /* 确保宽度占满 */
+            
+            /* 【核心修改】启用 Flex 布局，才能让下面的居中属性生效 */
+            display: flex;
+            flex-direction: column; /* 内容垂直排列 */
+            justify-content: center; /* 垂直居中 */
+            align-items: center; /* 水平居中 */
+            padding: 0;
+            padding-right: 5px;
+            box-sizing: border-box;
+        }
+
+        /* 2. 媒体模式 (适用于视频/图片)：禁止滚动，强制居中，黑色背景 */
+        /* 这个类会通过 JS 动态添加 */
+        .player-content.media-mode {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* 视频模式下禁止滚动 */
+            background-color: #000; /* 视频模式下背景变黑 */
+        }
+
+        /* 滚动条样式保持一致 */
+        .options-list::-webkit-scrollbar,
+        .player-content::-webkit-scrollbar {
             width: 6px;
         }
-
-        .options-list::-webkit-scrollbar-thumb {
+        .options-list::-webkit-scrollbar-thumb,
+        .player-content::-webkit-scrollbar-thumb {
             background: rgba(255, 107, 107, 0.6);
             border-radius: 3px;
         }
@@ -905,12 +953,6 @@
             border-color: rgba(255, 107, 107, 0.5);
         }
 
-        .option-bigtitle {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-        }
-
         .option-title {
             font-size: 1.3rem;
             color: #ff6b6b;
@@ -925,22 +967,24 @@
         }
 
         /* 预览容器样式 */
+        /* 1. 父容器：限制高度，确立 Flex 纵向布局 */
         .preview-container {
             width: 100%;
-            height: 50vh; /* 改为视窗高度 */
-            min-height: 450px; /* 保留最小高度 */
-            max-height: 550px; /* 设置最大高度 */
+            /* 强制撑满 60vh 的父容器 */
+            height: 100%; 
+            
             display: flex;
-            flex-direction: column;
-            padding: 2vh 2vw;
-            color: white;
+            flex-direction: column; /* 上下排列：上面是标题，下面是内容 */
+            
+            /* 移除父容器的 padding，由子元素的 margin 来控制间距，这样更精准 */
+            padding: 0; 
             overflow-y: auto;
+            box-sizing: border-box;
         }
 
         .preview-header {
             text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            padding: 20px 25px; /* 标题内部的舒适间距 */
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -964,22 +1008,30 @@
             font-style: italic;
         }
 
+        /* 3. 内容区域：核心修复（滚动 + 间距） */
         .preview-content {
+            /* 【核心】自动占据剩余的所有空间 */
             flex: 1;
-            padding-top: 0;
-            padding-bottom: 15px;
-            padding-left: 15px;
-            padding-right: 15px;
+            
+            /* 【核心】开启内部滚动 */
+            overflow-y: auto;
+            
+            /* 【核心】设置统一的边距，实现“上下左右”距离一致 */
+            /* 20px 对应上面分割线的距离，也对应到底部的距离 */
+            margin: 20px;
+            margin-bottom: 10px; 
+            
+            /* 内部文字的间距 */
+            padding: 20px;
+            
+            /* 样式美化 */
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
             line-height: 1.8;
-            font-size: 1.1rem;
-            margin-top: -5px;
-            margin-bottom: 100px;
-            overflow-y: auto; /* 启用垂直滚动 */
-            white-space: pre-line;
-            display: block; /* 改为block显示 */
-            text-align: left; /* 文本左对齐 */
+            font-size: 1.05rem;
+            white-space: pre-line; /* 保留换行符 */
+            text-align: left;
+            color: rgba(255, 255, 255, 0.9);
         }
 
         .preview-content::-webkit-scrollbar {
@@ -1021,23 +1073,6 @@
             margin: 0 auto; /* 确保按钮在容器中水平居中 */
         }
 
-        .view-video-button {
-            background: rgba(255, 107, 107, 0.8);
-            border: 1px solid rgba(255, 107, 107, 0.9);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-            border: none;
-        }
-
-        .view-video-button:hover {
-            background: rgba(255, 107, 107, 1);
-            transform: translateY(-2px);
-        }
-
         .preview-button:hover {
             background: rgba(255, 107, 107, 1);
             transform: translateY(-2px);
@@ -1052,83 +1087,98 @@
             background: rgba(255, 107, 107, 1);
         }
 
-        /* 内容播放区域 */
+        /* --- 1. 统一两大容器：都加上相同的页边距 --- */
+        .letters-options,
         .content-player {
             width: 100%;
-            height: 50vh; /* 改为视窗高度 */
-            min-height: 450px; /* 设置最小高度 */
-            max-height: 550px; /* 设置最大高度 */
-            background: rgba(0, 0, 0, 0.9);
+            height: 60vh; /* 视窗高度 */
+            min-height: 400px;
+            max-height: 800px;
+            
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
+            
+            /* 【关键】统一设置 20px 的页边距 */
+            padding: 20px; 
+            
             display: none;
             flex-direction: column;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-sizing: border-box;
             position: relative;
+            overflow: hidden;
         }
 
+        /* 激活状态 */
+        .letters-options.active,
         .content-player.active {
             display: flex;
         }
 
+        /* --- 2. 统一头部：去掉头部自己的 padding，改用 margin 撑开下间距 --- */
+        .options-header,
         .player-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            
+            /* 宽度占满内容区 */
+            width: 100%;
+            /* 固定头部高度，防止跳动 */
+            height: 50px; 
+            min-height: 50px;
+            
+            /* 底部边框和间距 */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 15px; /* 标题和下方内容的间距 */
+            padding-bottom: 10px; /* 边框和文字的间距 */
+            
+            /* 【关键】移除头部自带的 padding，因为父容器已经有 padding 了 */
+            padding-left: 0;
+            padding-right: 0;
+            padding-top: 0;
+            margin-top: 0;
+            
+            box-sizing: border-box;
         }
 
+        /* --- 4. 统一按钮区域 --- */
         .player-header-actions {
             display: flex;
             gap: 10px;
             align-items: center;
+            height: 100%;
         }
 
+        /* --- 3. 统一标题样式 --- */
+        .option-bigtitle,
         .player-title {
             font-size: 1.5rem;
             font-weight: bold;
             color: white;
+            line-height: 1.2;
+            margin: 0; /* 移除默认边距 */
         }
 
-        .close-button {
-            background: rgba(255, 107, 107, 0.8);
-            border: none;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .close-button:hover {
-            background: rgba(255, 107, 107, 1);
-            transform: translateY(-2px);
-        }
-
-        .player-content {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .video-player {
-            max-width: 42vw; /* 限制最大高度 */
-            max-height: 37vh; /* 限制最大高度 */
-            object-fit: contain; /* 保持：确保图片完整显示，不变形 */
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
+        /* 3. 完美限制视频和图片：核心优化点 */
+        /* 删除原来的 max-width: 42vw 这种写法 */
+        .video-player,
         .image-player {
-            max-width: 45vw; /* 限制最大高度 */
-            max-height: 35vh; /* 限制最大高度 */
-            object-fit: contain; /* 保持：确保图片完整显示，不变形 */
-            border-radius: 10px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+            /* 强制限制在父容器 (.player-content) 内部 */
+            width: 100%;
+            height: 100%;
+            /* 移除之前的 max-width/max-height 限制，改用 object-fit 控制显示 */
+            max-width: none;
+            max-height: none;
+            
+            /* 【关键】保持原有比例完整显示，不会被裁切，但会自动放大去贴合边缘 */
+            object-fit: contain;
+            display: block; 
+            margin: 0 auto; /* 自身水平居中 */
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
-
 
         /* 图片轮播容器样式 */
         .image-carousel-container {
@@ -2476,7 +2526,72 @@
                             <div class="song" onclick="playSong('song180')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
                                 <h3>待取名9</h3>
-                                <p>女神+西西里里乐队</p>
+                                <p>女神➕西西里里乐队</p>
+                            </div>
+                            <div class="song" onclick="playSong('song181')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>谪仙</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song182')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>机器铃砍菜刀</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song183')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>种果无果</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song184')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>天下</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song185')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>五块烟</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song186')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026021307.jpg">
+                                <h3>祝你爱我到天荒地老</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song187')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>小三</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song188')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026021309.jpg">
+                                <h3>爱的华尔兹</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song189')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>半山腰</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song190')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>风催雨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song191')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>Darling</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song192')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026021313.jpg">
+                                <h3>多幸运</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song193')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/20260207.jpg">
+                                <h3>故人词</h3>
+                                <p>女神➕西西里里乐队</p>
                             </div>
                         </div>
                     </div>
@@ -2538,13 +2653,11 @@
                     <div class="player-header">
                         <div class="player-title" id="playerTitle">内容播放</div>
                         <div class="player-header-actions">
-                            <button class="view-video-button" onclick="playVideo()">查看完整来信</button>
                             <button class="close-button" onclick="showOptions()">关闭</button>
                         </div>
                     </div>
                     <div class="player-content" id="playerContent">
-                        <!-- 内容将动态加载 -->
-                    </div>
+                        </div>
                 </div>
             </div>
 
@@ -2999,6 +3112,15 @@
         const yafanLetters = [
             {
                 id: 1,
+                title: "莉莉娅天天开心！少点内耗！",
+                date: "2025.10.01  @疯子与红头巾",
+                preview:  ``,
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20251001.jpg"
+                ]
+            },
+            {
+                id: 2,
                 title: "我们一直都在",
                 date: "2025.10.18  @💫缠藤",
                 preview:  `故事的开头是一朵小黄花，故事不会结束，我们为你汇聚一片花海`,
@@ -3006,7 +3128,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251018.mp4"
             },    
             {
-                id: 2,
+                id: 3,
                 title: "是最暖的光",
                 date: "2025.10.19  @願望是玟天要開心",
                 preview:  `继续做那个让世界变有趣的王子吧`,
@@ -3014,7 +3136,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251019.mp4"
             },
             {
-                id: 3,
+                id: 4,
                 title: "关于小鹿",
                 date: "2025.10.22  @粑粑奶昔拥护者",
                 preview: "他像一枚被命运不断抛掷的硬币，一面沾满了生活的泥泞与划痕，但每当面对我们，他总能让印着花朵的那一面朝上",
@@ -3025,7 +3147,18 @@
                 ]
             },
             {
-                id: 4,
+                id: 5,
+                title: "莉莉娅！你是人间四月天！",
+                date: "2025.10.26  @疯子与红头巾",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/2025102601.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2025102602.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2025102603.jpg"
+                ]
+            },
+            {
+                id: 6,
                 title: "lly是谁啊？",
                 date: "2025.11.07  @粑粑奶昔拥护者",
                 preview: "",
@@ -3033,7 +3166,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251107.mp4"
             },
             {
-                id: 5,
+                id: 7,
                 title: "lly，有属于自己的曙光",
                 date: "2025.11.14  @粑粑奶昔拥护者",
                 preview: `《赠诙郎》
@@ -3056,7 +3189,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251114.mp4"
             },
             {
-                id: 6,
+                id: 8,
                 title: "不被定义",
                 date: "2025.11.16  @粑粑奶昔拥护者",
                 preview: "无题",
@@ -3064,7 +3197,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251116.mp4"
             },
             {
-                id: 7,
+                id: 9,
                 title: "抽象主包",
                 date: "2025.11.20  @粑粑奶昔拥护者",
                 preview: "",
@@ -3072,7 +3205,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251120.mp4"
             },
             {
-                id: 8,
+                id: 10,
                 title: "你好，22岁的lly",
                 date: "2025.11.22  @願望是玟天要開心",
                 preview: `🎶🎶🎶🎶🎶
@@ -3089,7 +3222,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251122.mp4"
             },
             {
-                id: 9,
+                id: 11,
                 title: "福鹿双至",
                 date: "2025.11.22  @哈哈",
                 preview: `祝顶顶好的小鹿生日快乐！
@@ -3100,7 +3233,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112201.mp4"
             },
             {
-                id: 10,
+                id: 12,
                 title: "亲爱的小鹿 欢迎你来到人生中的六点三十六分🎊",
                 date: "2025.11.22  @幸运号",
                 preview: "",
@@ -3108,7 +3241,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112202.mp4"
             },
             {
-                id: 11,
+                id: 13,
                 title: "生日happy独白！！！",
                 date: "2025.11.22  @大难临头各自菲",
                 preview: "亲爱的lly，感谢遇见，你的存在让我感到幸运与温暖。从相识到如今，你已融入我的生活，成为我精神的支柱。你的歌声、文字和生活点滴治愈了我，希望你每天都能开心，照顾好自己。生日快乐，永远支持你！！",
@@ -3121,7 +3254,7 @@
                 ]
             },
             {
-                id: 12,
+                id: 14,
                 title: "lly大寿星生日快乐！！！",
                 date: "2025.11.22  @粑粑奶昔拥护者",
                 preview: "",
@@ -3132,7 +3265,7 @@
                 ]
             },
             {
-                id: 13,
+                id: 15,
                 title: "💛To全世界超好超帅的lly",
                 date: "2025.11.22  @💫缠藤",
                 preview: `哥生日快乐！
@@ -3144,7 +3277,7 @@
                 ]
             },
             {
-                id: 14,
+                id: 16,
                 title: "祝顶顶好顶顶帅的lly生日快乐！",
                 date: "2025.11.22  @喜欢亚~（lly要开心噢）",
                 preview: "一眨眼就到了你的生日了，新的一岁，希望你一切都好，每天都开开心心的，然后，愿所有的快乐，所有的幸福，所有的温馨，所有的好运围绕在你身边，多喜乐，长安宁！！！",
@@ -3156,7 +3289,7 @@
                 ]
             },
             {
-                id: 15,
+                id: 17,
                 title: "祝lly生日快乐",
                 date: "2025.11.22  @柚屿",
                 preview: `蛋糕画的有些歪，我想是祝福太满，压的它倾斜了
@@ -3170,7 +3303,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112207.mp4"
             },
             {
-                id: 16,
+                id: 18,
                 title: "愿你是你，永远自由",
                 date: "2025.11.22  @我爱辣斯（离不开小快乐版）",
                 preview: ``,
@@ -3178,7 +3311,27 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112208.mp4"
             },
             {
-                id: 17,
+                id: 19,
+                title: "祝lly 22岁生日快乐",
+                date: "2025.11.22  @uppffall",
+                preview: ``,
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220901.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220902.jpg"
+                ]
+            },
+            {
+                id: 20,
+                title: "生日贺辞",
+                date: "2025.11.22  @疯子与红头巾",
+                preview: ``,
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511221001.jpg",
+                "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221002.jpg"
+                ]
+            },
+            {
+                id: 21,
                 title: "连空气中的微尘都诉说着对你的思念",
                 date: "2025.11.28  @粑粑奶昔拥护者",
                 preview: "",
@@ -3186,7 +3339,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251128.mp4"
             },
             {
-                id: 18,
+                id: 22,
                 title: "遇你，如春水映梨花",
                 date: "2025.11.29  @💫缠藤",
                 preview: "",
@@ -3194,7 +3347,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251129.mp4"
             },
             {
-                id: 19,
+                id: 23,
                 title: "记录是一份珍贵的宝藏，不仅仅是lly",
                 date: "2025.12.01  @粑粑奶昔拥护者",
                 preview: "",
@@ -3202,7 +3355,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251201.mp4"
             },
             {
-                id: 20,
+                id: 24,
                 title: "在这里，我找了微光与海",
                 date: "2025.12.09  @吐司真好吃🎀",
                 preview: "",
@@ -3215,7 +3368,7 @@
                 ]
             },
             {
-                id: 21,
+                id: 25,
                 title: "lly是最好的抽象博主",
                 date: "2025.12.12  @粑粑奶昔拥护者",
                 preview: `怎么会觉得丢脸呢，抽象也算是有趣的代名词，有趣的灵魂不会感到丢脸，我们搁那叭叭叭叭叭叭，我们跟你一起在抽象一起在玩一起笑，我们都被你感染了，一个来自有趣的人，一个心里有着万里繁空的人，我们都被这个人吸引了，所以，一点都不丢脸，你真的超级好啊！希望lly可以一直开心不要内耗！不对，可以内耗，但是不要过度内耗，不要在不值得事上内耗哦`,
@@ -3223,7 +3376,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251212.mp4"
             },
             {
-                id: 22,
+                id: 26,
                 title: "小鼻嘎lly",
                 date: "2025.12.20  @粑粑奶昔拥护者",
                 preview: "",
@@ -3231,15 +3384,16 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251220.mp4"
             },
             {
-                id: 23,
-                title: "时如皎皎月 不管多久远 lly，我们一直都在",
+                id: 27,
+                title: `时如皎皎月 不管多久远
+                        lly，我们一直都在`,
                 date: "2025.12.22  @简一（没睡醒版）",
                 preview: `如果你能静下心来用心的细细了解他，你会发现他分享的生活很有趣，文笔很细腻写的也很生动，很抽象很宠粉很有趣活人感满满。因为，他是底色善良的人，他是真诚有耐心的人，他是有才华又谦虚的人，他和朋友们唱歌都非常的好听，他是可爱又有能力的人，他是会默默把不开心消化努力逗我们笑的人，他是无偿回报不带货每天坚持给我们带来快乐的人，他是温柔有着很强共情能力的人，他是非常有礼貌经常感谢粉丝的人，他是温暖且无私的人，他是三观正可靠贴心的人，他是我们的宝藏，我们互为良药`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251222.mp4"
             },
             {
-                id: 24,
+                id: 28,
                 title: "起码我们记得",
                 date: "2025.12.31  @进击的皮卡丘",
                 preview: `这个视频是NO.911的部分帖子合集，从12月21日进行统计，直至12月31日才正式画上句号。视频里的照片有的是根据头像来的，有的找不到头像或者头像太过于模糊的我就找别的图来代替了。💛
@@ -3251,7 +3405,16 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025123101.mp4"
             },
             {
-                id: 25,
+                id: 29,
+                title: "致我的春天",
+                date: "2025.12.31  @疯子与红头巾",
+                preview: ``,
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20251231.jpg"
+                ]
+            },
+            {
+                id: 30,
                 title: "新年快乐，不止你我",
                 date: "2026.01.01  @粑粑奶昔拥护者",
                 preview: `他用一种近乎物理定律般的本能，将嘴上推开的责任，在行动中牢牢地履行和收回，否定只是假动作，兑现才是目的地。lly，新年快乐，多幸运遇见了你，多幸运，遇见了你们`,
@@ -3259,7 +3422,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260101.mp4"
             },
             {
-                id: 26,
+                id: 31,
                 title: "我们2026年见🎊",
                 date: "2026.01.01  @幸运号",
                 preview: "",
@@ -3267,7 +3430,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010102.mp4"
             },
             {
-                id: 27,
+                id: 32,
                 title: "我想你值得被所有美好包围",
                 date: "2026.01.01  @柚屿",
                 preview: `他说“911是夜空，你们是星光，是照亮911的星光”
@@ -3283,7 +3446,23 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010103.mp4"
             },
             {
-                id: 28,
+                id: 33,
+                title: "感谢遇见，幸运遇见，新年快乐！",
+                date: "2026.01.01  @喜欢亚~（lly要开心噢）",
+                preview: `lly,西西里里，编外人员，大家新年快乐！！未来我们一起走下去吧，一起奔向幸福！
+                        感谢遇见你这是我2025年最最最幸运的事了，让我有了这么多美好的回忆，遇见这么有趣的大家，我非常非常开心。感谢你们！！！
+                        我很高兴可以认识你们！
+                        希望新的一年大家都天天开心！万事顺意！`,
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202601010101.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010102.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010103.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010104.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010105.jpg"
+                ]
+            },
+            {
+                id: 34,
                 title: "你不必完美，只需存在，就足够被爱",
                 date: "2026.01.03  @吐司真好吃🎀",
                 preview: "",
@@ -3291,6 +3470,57 @@
                 content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202601030101.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202601030102.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202601030103.jpg"
+                ]
+            },
+            {
+                id: 35,
+                title: "祝我认识lly一周年快乐",
+                date: "2026.02.03  @uppffall",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/2026020301.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2026020302.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2026020303.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2026020304.jpg"
+                ]
+            },
+            {
+                id: 36,
+                title: "lly，送你个小礼物",
+                date: "2026.02.11  @嗯嗯！",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260211.mp4"
+            },
+            {
+                id: 37,
+                title: "你是我们的恒星✨",
+                date: "2026.02.12  @疯子与红头巾",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20260212.jpg"
+                ]
+            },
+            {
+                id: 38,
+                title: "拆来信",
+                date: "2026.02.13  @算了我不会拆",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/2026021301.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2026021302.jpg"
+                ]
+            },
+            {
+                id: 39,
+                title: "给宝贝朋友lly的一封信",
+                date: "2026.02.13  @喜欢亚~（lly要开心噢）",
+                preview: "",
+                type: "image",
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202602130201.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202602130202.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202602130203.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202602130204.jpg"
                 ]
             }
         ];
@@ -3318,6 +3548,14 @@
                 videoPlayer.pause();
                 videoPlayer.currentTime = 0;
             }
+
+            // 2. 【核心修复】强制移除 media-mode 类
+            // 确保无论刚才在看什么，关闭时都恢复成默认的“透明、可滚动”状态
+            const playerContentEl = document.getElementById('playerContent');
+            if (playerContentEl) {
+                playerContentEl.classList.remove('media-mode');
+                playerContentEl.innerHTML = ''; // 可选：顺手清空内容，防止下次打开时闪烁旧画面
+            }
             
             letterCover.style.display = 'none';
             contentPlayer.classList.remove('active');
@@ -3325,21 +3563,22 @@
             currentLetter = null;
         }
 
-        // 显示娅粉有话说的预览界面
-        // 修改 showPreview 函数
+        // 1. 更新预览界面逻辑：显示两个按钮
         function showPreview(letter) {
             currentLetter = letter;
             lettersOptions.classList.remove('active');
             contentPlayer.classList.add('active');
-            // 预览界面时，标题固定为“娅粉有话说”
-            document.getElementById('playerTitle').textContent = '娅粉有话说';
+            
+            // 预览界面标题
+            const titleEl = document.getElementById('playerTitle');
+            if (titleEl) titleEl.textContent = '娅粉有话说';
 
+            const playerContent = document.getElementById('playerContent');
             playerContent.innerHTML = '';
 
+            // 生成预览内容容器
             const previewContainer = document.createElement('div');
             previewContainer.className = 'preview-container';
-
-            // 移除了底部按钮区域，功能已移至右上角
             previewContainer.innerHTML = `
                 <div class="preview-header">
                     <h3>${letter.title}</h3>
@@ -3349,11 +3588,10 @@
                     <div class="preview-write">${letter.preview}</div>
                 </div>
             `;
-
             playerContent.appendChild(previewContainer);
 
-            // 关键修改：更新播放界面头部按钮 - 预览界面时显示“查看视频”和“关闭”
-            const playerHeaderActions = document.querySelector('.player-header-actions');
+            // 【关键】预览模式：动态添加 "查看完整来信" 按钮
+            const playerHeaderActions = document.querySelector('#contentPlayer .player-header-actions');
             if (playerHeaderActions) {
                 playerHeaderActions.innerHTML = `
                     <button class="view-video-button" onclick="playVideo()">查看完整来信</button>
@@ -3362,56 +3600,78 @@
             }
         }
 
-        // 更新播放界面头部按钮（预览界面）
-        function updatePlayerHeaderForPreview() {
-            const playerHeader = document.querySelector('.player-header');
-            if (playerHeader) {
-                playerHeader.innerHTML = `
-                    <div class="player-title" id="playerTitle">娅粉有话说</div>
-                    <div class="player-header-actions">
-                        <button class="close-button" onclick="showOptions()">关闭</button>
-                    </div>
+        // 2. 更新播放界面逻辑：只显示关闭按钮
+        function updatePlayerHeaderForContent() {
+            const playerHeaderActions = document.querySelector('#contentPlayer .player-header-actions');
+            if (playerHeaderActions) {
+                // 【关键】播放模式：只保留关闭按钮，"查看完整来信" 按钮此时就被清除了
+                playerHeaderActions.innerHTML = `
+                    <button class="close-button" onclick="showOptions()">关闭</button>
                 `;
             }
         }
 
-        // 直接播放视频
+        // 播放内容（视频或图片）的核心函数
         function playVideo() {
+            // 1. 安全检查
             if (!currentLetter) return;
+
+            // 【新增】播放内容前，强制暂停底部的背景音乐
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer) {
+                audioPlayer.pause();
+            }
+
+            document.querySelectorAll('video').forEach(v => v.pause()); // <--- 这行代码实现了视频互斥
             
-            playerContent.innerHTML = '';
-            
+            // 2. 获取容器并清空旧内容
+            const playerContent = document.getElementById('playerContent');
+            const titleEl = document.getElementById('playerTitle');
+
+            // 【关键修改】进入视频/图片播放时，添加媒体模式类
+            // 这会让 CSS 变成 Flex 居中 + 禁止滚动 + 黑色背景
+            playerContent.classList.add('media-mode');
+            playerContent.innerHTML = ''; // 清空之前的内容
+            // 3. 更新标题
+            if (titleEl) titleEl.textContent = currentLetter.title;
+
+            // 4. 【关键】无论是什么类型，进入播放模式后，头部只留“关闭”按钮
+            updatePlayerHeaderForContent();
+
+            // 5. 根据类型渲染不同内容
             if (currentLetter.type === 'video') {
+                // --- 视频逻辑 ---
                 const video = document.createElement('video');
                 video.className = 'video-player';
                 video.src = currentLetter.content;
                 video.controls = true;
-                video.autoplay = true;
-                video.controlsList = 'nodownload nofullscreen'; // 禁用下载和全屏按钮
+                video.autoplay = true; // 自动播放
+                video.controlsList = 'nodownload nofullscreen';
                 playerContent.appendChild(video);
-                
-                // 更新播放界面标题为视频标题
-                document.getElementById('playerTitle').textContent = currentLetter.title;
-                
-                // 更新播放界面按钮 - 播放视频时只显示关闭按钮
-                updatePlayerHeaderForVideo();
-                
-            } else if (currentLetter.type === 'image') {
-                // 图片播放逻辑 - 新增对数组的判断
-                document.getElementById('playerTitle').textContent = currentLetter.title;
-                updatePlayerHeaderForVideo(); // 播放界面只显示“关闭”
 
-                // 判断 content 是字符串（单图）还是数组（多图轮播）
+            } else if (currentLetter.type === 'image') {
+                // --- 图片逻辑 ---
+                
+                // 判断是否为多图（数组）
                 if (Array.isArray(currentLetter.content) && currentLetter.content.length > 1) {
-                    // 多张图片 -> 创建轮播图
-                    createImageCarousel(currentLetter.content);
+                    // 如果是多张图，调用轮播组件（你需要确保 createImageCarousel 函数存在）
+                    createImageCarousel(currentLetter.content); 
                 } else {
-                    // 单张图片 -> 沿用原来的简单展示
+                    // 如果是单张图
                     const imgUrl = Array.isArray(currentLetter.content) ? currentLetter.content[0] : currentLetter.content;
+                    
                     const img = document.createElement('img');
-                    img.className = 'image-player';
+                    img.className = 'image-player'; // 应用刚才写的 CSS
                     img.src = imgUrl;
                     img.alt = currentLetter.title;
+                    
+                    // 防止图片加载失败
+                    img.onerror = function() {
+                        this.alt = "图片加载失败";
+                        this.style.display = "none";
+                        playerContent.innerHTML = '<div style="color:white;">图片无法显示</div>';
+                    };
+                    
                     playerContent.appendChild(img);
                 }
             }
@@ -3647,7 +3907,8 @@
                 'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/kuohao.jpg',
                 'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/shuangbaotai.jpg',
                 'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/wangerya.jpg',
-                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/xiaoyisheng.jpg'
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/xiaoyisheng.jpg',
+                'https://img.no911happystarfile.dpdns.org/PeopleColumns/friends/ningxiaocao.jpg'
             ]
         };
 
@@ -3883,6 +4144,19 @@
             song178: 'https://img.no911happystarfile.dpdns.org/Song/2026010807.mp3',
             song179: 'https://img.no911happystarfile.dpdns.org/Song/2026010808.mp3',
             song180: 'https://img.no911happystarfile.dpdns.org/Song/20260212.mp3',
+            song181: 'https://img.no911happystarfile.dpdns.org/Song/2026021302.mp3',
+            song182: 'https://img.no911happystarfile.dpdns.org/Song/2026021303.mp3',
+            song183: 'https://img.no911happystarfile.dpdns.org/Song/2026021304.mp3',
+            song184: 'https://img.no911happystarfile.dpdns.org/Song/2026021305.mp3',
+            song185: 'https://img.no911happystarfile.dpdns.org/Song/2026021306.mp3',
+            song186: 'https://img.no911happystarfile.dpdns.org/Song/2026021307.mp3',
+            song187: 'https://img.no911happystarfile.dpdns.org/Song/2026021308.mp3',
+            song188: 'https://img.no911happystarfile.dpdns.org/Song/2026021309.mp3',
+            song189: 'https://img.no911happystarfile.dpdns.org/Song/2026021310.mp3',
+            song190: 'https://img.no911happystarfile.dpdns.org/Song/2026021311.mp3',
+            song191: 'https://img.no911happystarfile.dpdns.org/Song/2026021312.mp3',
+            song192: 'https://img.no911happystarfile.dpdns.org/Song/2026021313.mp3',
+            song193: 'https://img.no911happystarfile.dpdns.org/Song/20260207.mp3',
         };
         
         const songTitles = [
@@ -3901,7 +4175,8 @@
             "洛希极限", "座位", "未完成的爱", "同花顺", "同花顺", "心如止水", "执迷不悟", "小雨", "我还记得那天", "白羊", "处处吻", "月亮代表我的心", "我只在乎你",
             "把耳朵叫醒", "舍得", "说散就散", "折断玫瑰", "이젠안녕", "体面", "双鱼座", "为时已晚", "别怕我伤心", "九张机", "千古", "爱殇", "我们的纪念", "消愁",
             "눈 속에 묻힌 이름", "太晚才明白", "太晚才明白", "今昔", "一生等你", "喜欢你", "献天缘", "麻醉师", "浪人琵琶", "空空如也", "贝加尔湖畔", "piano", "岸边客",
-            "起风了", "无情画", "顿啦爱你", "忆江南", "待取名9"
+            "起风了", "无情画", "顿啦爱你", "忆江南", "待取名9", "谪仙", "机器铃砍菜刀", "种果无果", "天下", "五块烟", "祝你爱我到天荒地老", "小三", "爱的华尔兹", "半山腰",
+             "风催雨", "Darling", "多幸运", "故人词"
         ];
 
         const audioPlayer = document.getElementById('audioPlayer');
@@ -3915,6 +4190,10 @@
 
         // 播放指定歌曲
         function playSong(songId, index) {
+            // 【新增】播放音乐前，先暂停页面上所有的视频
+            document.querySelectorAll('video').forEach(video => {
+                video.pause();
+            });
             // 更新当前歌曲索引
             currentSongIndex = index;
             
@@ -4101,6 +4380,10 @@
                 videoPlayer.pause();
                 videoPlayer.currentTime = 0;
             }
+
+            // 【核心修复】退出时移除 media-mode 类，清理样式
+            dailyPlayerContent.classList.remove('media-mode');
+
             dailyCover.style.display = 'none';
             dailyPlayer.classList.remove('active');
             dailyOptions.classList.add('active');
@@ -4111,11 +4394,23 @@
         function playDailySnippet(snippetId) {
             const snippet = dailySnippets.find(item => item.id === snippetId);
             if (!snippet) return;
+
+            // 【新增】播放花絮前，强制暂停底部的背景音乐
+            const audioPlayer = document.getElementById('audioPlayer');
+            if (audioPlayer) {
+                audioPlayer.pause();
+            }
+
+            document.querySelectorAll('video').forEach(v => v.pause()); // <--- 这行代码实现了视频互斥
             
             currentDailySnippet = snippet;
             dailyOptions.classList.remove('active');
             dailyPlayer.classList.add('active');
             dailyPlayerTitle.textContent = snippet.title;
+
+            // 【核心修复】添加 media-mode 类
+            // 让日常花絮的容器也变成“黑底、居中、无滚动条”的完美适配模式
+            dailyPlayerContent.classList.add('media-mode');
             
             dailyPlayerContent.innerHTML = '';
             
@@ -4270,6 +4565,13 @@
         let explosions = [];
         let animationId = null;
         let isShowingText = false; // 是否正在展示文字
+        // 1. 初始化音效对象
+        // 请确保你的音效文件与 HTML 在同一目录下，或填写正确的完整链接
+        const fireworkSfx = new Audio('firework_audio.mp3'); 
+        fireworkSfx.preload = 'auto';
+
+        // 记录当前状态，防止文字显示期间重复触发
+        let isSfxPlaying = false;
 
         // 核心：记录当前播放到第几个颜色和文字
         let paletteIndex = 0;
@@ -4297,10 +4599,20 @@
                 text: "遇见你这件事\n本身就是奇迹" 
             },
             { 
+                cannon: '#ff758c', 
+                particles: ["#ff7eb3", "#ff758c", "#fa709a", "#fff"], 
+                text: "愿你眼中总有光\n活成自己喜欢的模样" 
+            },
+            { 
+                cannon: '#9b2226', 
+                particles: ["#ae2012", "#bb3e03", "#ca6702", "#fff"], 
+                text: "岁岁常欢愉\n年年皆胜意" 
+            },
+            { 
                 cannon: '#fffce0', 
                 particles: ["#d4af37", "#f9d71c", "#ffefd5", "#fff"], 
                 text: "我亲爱的宝贝朋友\n一直一起走下去吧" // [cite: 58]
-            }
+            },
         ];
 
         let currentMessage = ""; // 存放当前选中的文字
@@ -4315,6 +4627,9 @@
         function launchAdvancedFirework(e) {
             if (e && e.stopPropagation) e.stopPropagation();
             if (isShowingText) return; // 如果文字正在显示，暂时不许发射
+
+            // 停止页面上可能正在播放的视频或音乐，防止抢占 CPU [cite: 782, 663]
+            document.querySelectorAll('video, audio').forEach(m => m.pause());
 
             document.body.classList.add('show-fireworks');
             canvas.style.display = 'block';
@@ -4378,7 +4693,7 @@
             if (level > maxLevels) return;
             
             // 【优化】显著减少粒子数量：主爆炸由 80 减至 40，子爆炸由 20 减至 10
-            const count = level === 1 ? 50 : 20; 
+            const count = level === 1 ? 40 : 20; 
             
             for (let i = 0; i < count; i++) {
                 const angle = Math.random() * Math.PI * 2;
@@ -4437,7 +4752,6 @@
             // --- 核心改动：文字渐变显示逻辑 ---
             if (cannonballs.length === 0 && explosions.length === 0 && !isShowingText) {
                 isShowingText = true; // 进入文字展示阶段
-                
                 // 1. 设置文字内容
                 messageEl.innerText = currentMessage;
                 
@@ -4470,3 +4784,4 @@
     
 </body>
 </html>
+
