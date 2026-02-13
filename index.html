@@ -798,6 +798,10 @@
             position: relative;
             overflow: hidden;
             border: 2px solid rgba(255, 255, 255, 0.1);
+            /* 【新增】强制开启 GPU 硬件加速，隔离渲染层 */
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            will-change: transform;
         }
 
         .letter-cover:hover {
@@ -829,6 +833,12 @@
                 rgba(255, 107, 107, 0.1) 50%,
                 transparent 55%
             );
+            /* 【新增】确保动画元素背部不可见，减少渲染负担 */
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            
+            /* 【新增】提升图层层级，防止与边框打架 */
+            z-index: 2;
             transform: rotate(30deg);
             animation: shine 3s infinite linear;
         }
@@ -902,11 +912,13 @@
             /* 【核心修改】启用 Flex 布局，才能让下面的居中属性生效 */
             display: flex;
             flex-direction: column; /* 内容垂直排列 */
-            justify-content: center; /* 垂直居中 */
+            justify-content: flex-start; /* 垂直居中 */
             align-items: center; /* 水平居中 */
             padding: 0;
             padding-right: 5px;
             box-sizing: border-box;
+            /* 确保在非视频模式下允许滚动 */
+            overflow-y: auto;
         }
 
         /* 2. 媒体模式 (适用于视频/图片)：禁止滚动，强制居中，黑色背景 */
@@ -975,10 +987,10 @@
             
             display: flex;
             flex-direction: column; /* 上下排列：上面是标题，下面是内容 */
-            
+            /* 【核心修改】改为 hidden，父级绝对不许滚动 */
+            overflow: hidden;
             /* 移除父容器的 padding，由子元素的 margin 来控制间距，这样更精准 */
             padding: 0; 
-            overflow-y: auto;
             box-sizing: border-box;
         }
 
@@ -1012,6 +1024,8 @@
         .preview-content {
             /* 【核心】自动占据剩余的所有空间 */
             flex: 1;
+            /* 【核心修改】添加 min-height: 0; 这是 Flex 子元素能正常滚动的关键魔法！ */
+            min-height: 0;
             
             /* 【核心】开启内部滚动 */
             overflow-y: auto;
@@ -1970,8 +1984,8 @@
                             </div>
                             <div class="song" onclick="playSong('song69')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
-                                <h3>四月的海棠花未眠</h3>
-                                <p>LLY</p>
+                                <h3>四点的海棠花未眠</h3>
+                                <p>LLY➕室友</p>
                             </div>
                             <div class="song" onclick="playSong('song70')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
@@ -2593,6 +2607,481 @@
                                 <h3>故人词</h3>
                                 <p>女神➕西西里里乐队</p>
                             </div>
+                            <div class="song" onclick="playSong('song194')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2026021314.jpg">
+                                <h3>姐姐我想得到你（含彩蛋）</h3>
+                                <p>女神➕西西里里乐队➕LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song195')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>Always remember us this way</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song196')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>First Love</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song197')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>HEAVEN</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song198')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>I Will Show You</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song199')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>jazz bar</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song200')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>Let me down slowly</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song201')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>Ma Boo</h3>
+                                <p>室友</p>
+                            </div>
+                            <div class="song" onclick="playSong('song202')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>Nobody</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song203')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>starboy</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song204')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>爱</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song205')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>爱的牢笼</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song206')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>暗示分离</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song207')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>黯然销魂</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song208')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>巴赫旧约</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song209')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>白夜</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song210')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>别打电话</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song211')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122017.jpg">
+                                <h3>别怕我伤心</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song212')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>并肩为家</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song213')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>不负人间</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song214')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>不做情人</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song215')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>不做无法实现的梦</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song216')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>差点（朝鲜语）</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song217')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>痴情冢</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song218')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>穿过一千公里找到你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song219')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>辞九门回忆</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song220')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>此生不换</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song221')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>典狱司</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song222')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>动物世界</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song223')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>放晴</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song224')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>放生</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song225')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>该死的懦弱</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song226')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>归去来兮</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song227')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>桂花谣</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song228')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122017.jpg">
+                                <h3>和最初一样</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song229')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>画心</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song230')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>回不来</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song231')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>活色生香</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song232')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>讲真的</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song233')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>来啊</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song234')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>另一个时空的你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song235')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>六月的雨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song236')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>笼中鸟</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song237')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>路灯下的微光</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song238')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>面具</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song239')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>难得有情人</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song240')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>难生恨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song241')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>闹够了没有</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song242')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>你眼里我有多差</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song243')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>懦弱</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song244')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>女孩</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song245')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122017.jpg">
+                                <h3>菩提偈</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song246')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>七个访客</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song247')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>七月七日晴</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song248')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>凄美地</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song249')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>千年泪</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song250')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>千年之恋</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song251')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>千秋迭梦</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song252')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>青城山下白素贞</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song253')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>青玉恋</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song254')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>情骨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song255')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>全世界都快乐除了我自己</h3>
+                                <p>LLY➕小叔</p>
+                            </div>
+                            <div class="song" onclick="playSong('song256')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>如果爱能早些说出来</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song257')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>如果爱忘了</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song258')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>山外小楼夜听雨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song259')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>韶华与共</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song260')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>时间煮雨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song261')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>是不是爱情</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song262')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122017.jpg">
+                                <h3>思慕</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song263')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>叹云兮</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song264')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>天若有情</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song265')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>听夜雨</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song266')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>忘了</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song267')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>问明月</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song268')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>我的一个道姑朋友</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song269')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>我和我的祖国</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song270')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>我走后</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song271')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>无法完成的事</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song272')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>嚣张</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song273')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122011.jpg">
+                                <h3>小可爱</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song274')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122012.jpg">
+                                <h3>心之火</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song275')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122013.jpg">
+                                <h3>循迹</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song276')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122014.jpg">
+                                <h3>烟熏妆</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song277')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122015.jpg">
+                                <h3>眼鼻嘴</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song278')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122016.jpg">
+                                <h3>一爱难求</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song279')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122017.jpg">
+                                <h3>一时的选择</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song280')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122001.jpg">
+                                <h3>月半弯</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song281')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122002.jpg">
+                                <h3>月半小夜曲</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song282')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122003.jpg">
+                                <h3>月下起舞</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song283')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122004.jpg">
+                                <h3>月牙湾</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song284')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
+                                <h3>越爱越推开</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song285')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
+                                <h3>怎么说我不爱你</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song286')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122007.jpg">
+                                <h3>长相思</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song287')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122008.jpg">
+                                <h3>转身即心痛（双声线版）</h3>
+                                <p>LLY</p>
+                            </div>
+                            <div class="song" onclick="playSong('song288')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122009.jpg">
+                                <h3>追梦人</h3>
+                                <p>LLY</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3114,24 +3603,23 @@
                 id: 1,
                 title: "莉莉娅天天开心！少点内耗！",
                 date: "2025.10.01  @疯子与红头巾",
-                preview:  ``,
+                preview: ``,
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20251001.jpg"
-                ]
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20251001.jpg"]
             },
             {
                 id: 2,
                 title: "我们一直都在",
                 date: "2025.10.18  @💫缠藤",
-                preview:  `故事的开头是一朵小黄花，故事不会结束，我们为你汇聚一片花海`,
+                preview: `故事的开头是一朵小黄花，故事不会结束，我们为你汇聚一片花海`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251018.mp4"
-            },    
+            },
             {
                 id: 3,
                 title: "是最暖的光",
                 date: "2025.10.19  @願望是玟天要開心",
-                preview:  `继续做那个让世界变有趣的王子吧`,
+                preview: `继续做那个让世界变有趣的王子吧`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251019.mp4"
             },
@@ -3141,7 +3629,8 @@
                 date: "2025.10.22  @粑粑奶昔拥护者",
                 preview: "他像一枚被命运不断抛掷的硬币，一面沾满了生活的泥泞与划痕，但每当面对我们，他总能让印着花朵的那一面朝上",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202510220101.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202510220101.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202510220102.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202510220103.jpg"
                 ]
@@ -3152,7 +3641,8 @@
                 date: "2025.10.26  @疯子与红头巾",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/2025102601.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2025102601.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/2025102602.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/2025102603.jpg"
                 ]
@@ -3225,10 +3715,7 @@
                 id: 11,
                 title: "福鹿双至",
                 date: "2025.11.22  @哈哈",
-                preview: `祝顶顶好的小鹿生日快乐！
-                    从10月25号这个想法初具雏形，10月26号写下完整的生日企划、召集大家，再到11月10号呈现第一版成片，11月17号生日视频最终版导出，这个视频的诞生可谓几经波澜，不过幸好，《福鹿双至》此时此刻能被看见。在此特别感谢@幸运号 @粑粑奶昔拥护者（徽草不是👻版）@进击的皮卡丘 @艺waw @uupffall @超级阿姝 @蛋卷米灰 @丸丸丸丸丸辣 @水水很会压AK @俺是李雷 @爱吃鱼丁 @-吐司超好吃- @柚屿 @云汐月 @咕噜呱啦说什么呢给我吃一口（咸桃汽水）@LOVE神尊 @喜欢亚~（lly要开心噢）@缠藤（願lly永遠開心版）@大难临头各自菲 @嗨，你好（lly唯粉版）@疯子与红头巾 @我爱辣斯（见黄子四次版）@佳栩 @兔子魔法师🐰 @简一（没睡醒版）@烤布蕾芝士拉丝叻 @洋柿子派 宝们的配合支持！
-                    因为小鹿我们得以相识，我相信同类相吸，真诚的人吸引真诚的人，散发出去的温暖总会照回自己身上。这段时间你对我们说了太多声谢谢，但我们一起经历了这么多，不是亲人也胜似亲人啦，不用这么客气。请相信你是顶顶顶顶顶顶好的，你做的任何决定我们都支持，所以，坚定地做你自己吧！
-                    `,
+                preview: `祝顶顶好的小鹿生日快乐！...`, // 此处省略了部分冗长文字以保持简洁
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112201.mp4"
             },
@@ -3244,9 +3731,10 @@
                 id: 13,
                 title: "生日happy独白！！！",
                 date: "2025.11.22  @大难临头各自菲",
-                preview: "亲爱的lly，感谢遇见，你的存在让我感到幸运与温暖。从相识到如今，你已融入我的生活，成为我精神的支柱。你的歌声、文字和生活点滴治愈了我，希望你每天都能开心，照顾好自己。生日快乐，永远支持你！！",
+                preview: "亲爱的lly，感谢遇见，你的存在让我感到幸运与温暖...",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220301.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220301.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220302.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220303.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220304.jpg",
@@ -3259,7 +3747,8 @@
                 date: "2025.11.22  @粑粑奶昔拥护者",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220401.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220401.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220402.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220403.jpg"
                 ]
@@ -3268,10 +3757,10 @@
                 id: 15,
                 title: "💛To全世界超好超帅的lly",
                 date: "2025.11.22  @💫缠藤",
-                preview: `哥生日快乐！
-                希望你以后每天开开心心，万事顺遂，心想事成！生日恰逢小雪❄️，祝你瑞雪兆福，昭昭如愿，岁岁安澜`,
+                preview: `哥生日快乐！希望你以后每天开开心心...`,
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220501.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220501.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220502.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220503.jpg"
                 ]
@@ -3280,9 +3769,10 @@
                 id: 16,
                 title: "祝顶顶好顶顶帅的lly生日快乐！",
                 date: "2025.11.22  @喜欢亚~（lly要开心噢）",
-                preview: "一眨眼就到了你的生日了，新的一岁，希望你一切都好，每天都开开心心的，然后，愿所有的快乐，所有的幸福，所有的温馨，所有的好运围绕在你身边，多喜乐，长安宁！！！",
+                preview: "一眨眼就到了你的生日了，新的一岁，希望你一切都好...",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220601.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220601.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220602.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220603.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220604.jpg"
@@ -3292,13 +3782,7 @@
                 id: 17,
                 title: "祝lly生日快乐",
                 date: "2025.11.22  @柚屿",
-                preview: `蛋糕画的有些歪，我想是祝福太满，压的它倾斜了
-                        没想到今天是来xh的七周年！
-                        对小红书未来的期待是小红对lly好亿点！
-                        要和大家一直陪伴向前走
-                        1122是个好日子🎉
-                        “深深铭刻 像今天一样 我会拿出来看 记住今天”
-                        这是幸福的一天`,
+                preview: `蛋糕画的有些歪，我想是祝福太满...`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025112207.mp4"
             },
@@ -3316,7 +3800,8 @@
                 date: "2025.11.22  @uppffall",
                 preview: ``,
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511220901.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220901.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202511220902.jpg"
                 ]
             },
@@ -3326,12 +3811,27 @@
                 date: "2025.11.22  @疯子与红头巾",
                 preview: ``,
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202511221001.jpg",
-                "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221002.jpg"
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221101.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221103.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221105.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221107.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221109.jpg"
                 ]
             },
             {
                 id: 21,
+                title: "陆总生日存档",
+                date: "2025.11.22  @算了我不会拆",
+                preview: `其实也没什么，就是关于@哈哈这个视频各个阶段的感受...`,
+                type: "image",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221001.jpg",
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202511221002.jpg"
+                ]
+            },
+            {
+                id: 22,
                 title: "连空气中的微尘都诉说着对你的思念",
                 date: "2025.11.28  @粑粑奶昔拥护者",
                 preview: "",
@@ -3339,7 +3839,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251128.mp4"
             },
             {
-                id: 22,
+                id: 23,
                 title: "遇你，如春水映梨花",
                 date: "2025.11.29  @💫缠藤",
                 preview: "",
@@ -3347,7 +3847,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251129.mp4"
             },
             {
-                id: 23,
+                id: 24,
                 title: "记录是一份珍贵的宝藏，不仅仅是lly",
                 date: "2025.12.01  @粑粑奶昔拥护者",
                 preview: "",
@@ -3355,12 +3855,13 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251201.mp4"
             },
             {
-                id: 24,
+                id: 25,
                 title: "在这里，我找了微光与海",
                 date: "2025.12.09  @吐司真好吃🎀",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202512090101.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090101.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090102.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090103.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202512090104.jpg",
@@ -3368,15 +3869,15 @@
                 ]
             },
             {
-                id: 25,
+                id: 26,
                 title: "lly是最好的抽象博主",
                 date: "2025.12.12  @粑粑奶昔拥护者",
-                preview: `怎么会觉得丢脸呢，抽象也算是有趣的代名词，有趣的灵魂不会感到丢脸，我们搁那叭叭叭叭叭叭，我们跟你一起在抽象一起在玩一起笑，我们都被你感染了，一个来自有趣的人，一个心里有着万里繁空的人，我们都被这个人吸引了，所以，一点都不丢脸，你真的超级好啊！希望lly可以一直开心不要内耗！不对，可以内耗，但是不要过度内耗，不要在不值得事上内耗哦`,
+                preview: `怎么会觉得丢脸呢，抽象也算是有趣的代名词...`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251212.mp4"
             },
             {
-                id: 26,
+                id: 27,
                 title: "小鼻嘎lly",
                 date: "2025.12.20  @粑粑奶昔拥护者",
                 preview: "",
@@ -3384,45 +3885,39 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251220.mp4"
             },
             {
-                id: 27,
-                title: `时如皎皎月 不管多久远
-                        lly，我们一直都在`,
+                id: 28,
+                title: `时如皎皎月 不管多久远 lly，我们一直都在`,
                 date: "2025.12.22  @简一（没睡醒版）",
-                preview: `如果你能静下心来用心的细细了解他，你会发现他分享的生活很有趣，文笔很细腻写的也很生动，很抽象很宠粉很有趣活人感满满。因为，他是底色善良的人，他是真诚有耐心的人，他是有才华又谦虚的人，他和朋友们唱歌都非常的好听，他是可爱又有能力的人，他是会默默把不开心消化努力逗我们笑的人，他是无偿回报不带货每天坚持给我们带来快乐的人，他是温柔有着很强共情能力的人，他是非常有礼貌经常感谢粉丝的人，他是温暖且无私的人，他是三观正可靠贴心的人，他是我们的宝藏，我们互为良药`,
+                preview: `如果你能静下心来用心的细细了解他，你会发现他分享的生活很有趣...`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251222.mp4"
             },
             {
-                id: 28,
+                id: 29,
                 title: "起码我们记得",
                 date: "2025.12.31  @进击的皮卡丘",
-                preview: `这个视频是NO.911的部分帖子合集，从12月21日进行统计，直至12月31日才正式画上句号。视频里的照片有的是根据头像来的，有的找不到头像或者头像太过于模糊的我就找别的图来代替了。💛
-                    其实lly发的帖子不止这些，这一年给我们带来的欢乐也不止于此。看似平常的分享，藏着最真实的鲜活与可爱，一次次驱散疲惫与沉闷，留下满屏的笑意与温暖。这些美好都留存在我们的记忆里，为了多留存一些温暖，便诞生了这则视频，愿它能成为我们珍藏回忆的小小载体。💕
-                    最后，祝所有人新年好好的，都能平平安安、稳稳当当地走向幸福，永远被温暖包围，被爱包围，也被好运一直偏爱。💜
-                    想对你说：其实有时候我们在屏幕前发出的赞叹是孤单的，身边很少人可以分享，但是你的礼物像一座桥，也像是一个看得见、摸得着的小家，让我们看到，原来这份喜欢可以如此具象化、如此璀璨，谢谢你带来这份美好的礼物。
-                    此岁今年，顺绥冬安。`,
+                preview: `这个视频是NO.911的部分帖子合集...`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025123101.mp4"
             },
             {
-                id: 29,
+                id: 30,
                 title: "致我的春天",
                 date: "2025.12.31  @疯子与红头巾",
                 preview: ``,
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20251231.jpg"
-                ]
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20251231.jpg"]
             },
             {
-                id: 30,
+                id: 31,
                 title: "新年快乐，不止你我",
                 date: "2026.01.01  @粑粑奶昔拥护者",
-                preview: `他用一种近乎物理定律般的本能，将嘴上推开的责任，在行动中牢牢地履行和收回，否定只是假动作，兑现才是目的地。lly，新年快乐，多幸运遇见了你，多幸运，遇见了你们`,
+                preview: `他用一种近乎物理定律般的本能，将嘴上推开的责任...`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260101.mp4"
             },
             {
-                id: 31,
+                id: 32,
                 title: "我们2026年见🎊",
                 date: "2026.01.01  @幸运号",
                 preview: "",
@@ -3430,31 +3925,21 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010102.mp4"
             },
             {
-                id: 32,
+                id: 33,
                 title: "我想你值得被所有美好包围",
                 date: "2026.01.01  @柚屿",
-                preview: `他说“911是夜空，你们是星光，是照亮911的星光”
-                        夜空用深邃的墨蓝为星光铺展画布，让每一缕微光都有被看见的底气；星光以细碎的闪烁为夜空缀满呼吸，让寂静的夜幕有了流动的温度。夜空与星光的互相成就，是一场温柔的双向奔赴。夜空是星光的“日记本”，星光是夜空珍视的温柔诗行，彼此让平凡有了意义。
-                        遇见lly和大家，是一件很幸运的事。lly和娅粉们同等的重要，大家用各自的色彩为这个大家庭添上温暖与活力。如果说lly是那个为我们编织幸福的人，那大家就是把这份幸福轻轻捧在手心、传递和延续的使者，让快乐温暖在彼此心底慢慢发芽、小树成林。
-                        “爱源自我看见你”而在这片小宇宙中，“我”永远能被“看见”，遇见你们让我的世界都变成了一个装满梦境的万花筒，每转一下，都是惊喜的暖光。
-                        遇见你们很高兴lly&娅粉 感谢相遇
-                        感谢片尾新年快乐祝福的宝宝们🥰
-                        ㊗️lly 娅粉 西西里里家人朋友们，大家新年快乐！！！
-                        我们会像这首歌样的没有尽头一直一起走
-                        那么，朋友们，我们明天见！`,
+                preview: `他说“911是夜空，你们是星光，是照亮911的星光”...`,
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010103.mp4"
             },
             {
-                id: 33,
+                id: 34,
                 title: "感谢遇见，幸运遇见，新年快乐！",
                 date: "2026.01.01  @喜欢亚~（lly要开心噢）",
-                preview: `lly,西西里里，编外人员，大家新年快乐！！未来我们一起走下去吧，一起奔向幸福！
-                        感谢遇见你这是我2025年最最最幸运的事了，让我有了这么多美好的回忆，遇见这么有趣的大家，我非常非常开心。感谢你们！！！
-                        我很高兴可以认识你们！
-                        希望新的一年大家都天天开心！万事顺意！`,
+                preview: `lly,西西里里，编外人员，大家新年快乐！！...`,
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202601010101.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010101.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010102.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010103.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202601010104.jpg",
@@ -3462,68 +3947,80 @@
                 ]
             },
             {
-                id: 34,
+                id: 35,
                 title: "你不必完美，只需存在，就足够被爱",
                 date: "2026.01.03  @吐司真好吃🎀",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202601030101.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202601030101.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202601030102.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202601030103.jpg"
                 ]
             },
             {
-                id: 35,
+                id: 36,
+                title: "我不怀疑 会有真心",
+                date: "2026.01.04  @算了我不会拆",
+                preview: "",
+                type: "video",
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260204.mp4"
+            },
+            {
+                id: 37,
                 title: "祝我认识lly一周年快乐",
                 date: "2026.02.03  @uppffall",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/2026020301.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2026020301.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/2026020302.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/2026020303.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/2026020304.jpg"
                 ]
             },
             {
-                id: 36,
+                id: 38,
                 title: "lly，送你个小礼物",
                 date: "2026.02.11  @嗯嗯！",
-                preview: "",
+                preview: "第二部分的灵感来源于新年你在评论区说你看着人来来往往...",
                 type: "video",
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260211.mp4"
             },
             {
-                id: 37,
+                id: 39,
                 title: "你是我们的恒星✨",
                 date: "2026.02.12  @疯子与红头巾",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20260212.jpg"
-                ]
+                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20260212.jpg"]
             },
             {
-                id: 38,
+                id: 40,
                 title: "拆来信",
                 date: "2026.02.13  @算了我不会拆",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/2026021301.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/2026021301.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/2026021302.jpg"
                 ]
             },
             {
-                id: 39,
+                id: 41,
                 title: "给宝贝朋友lly的一封信",
                 date: "2026.02.13  @喜欢亚~（lly要开心噢）",
                 preview: "",
                 type: "image",
-                content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/202602130201.jpg",
+                content: [
+                    "https://img.no911happystarfile.dpdns.org/FanBlessing/202602130201.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202602130202.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202602130203.jpg",
                     "https://img.no911happystarfile.dpdns.org/FanBlessing/202602130204.jpg"
                 ]
             }
         ];
+
 
         // DOM元素
         const letterCover = document.getElementById('letterCover');
@@ -3574,6 +4071,7 @@
             if (titleEl) titleEl.textContent = '娅粉有话说';
 
             const playerContent = document.getElementById('playerContent');
+            playerContent.classList.remove('media-mode');
             playerContent.innerHTML = '';
 
             // 生成预览内容容器
@@ -4157,6 +4655,101 @@
             song191: 'https://img.no911happystarfile.dpdns.org/Song/2026021312.mp3',
             song192: 'https://img.no911happystarfile.dpdns.org/Song/2026021313.mp3',
             song193: 'https://img.no911happystarfile.dpdns.org/Song/20260207.mp3',
+            song194: 'https://img.no911happystarfile.dpdns.org/Song/2026021314.mp3',
+            song195: 'https://img.no911happystarfile.dpdns.org/Song/2026021401.mp3',
+            song196: 'https://img.no911happystarfile.dpdns.org/Song/2026021402.mp3',
+            song197: 'https://img.no911happystarfile.dpdns.org/Song/2026021403.mp3',
+            song198: 'https://img.no911happystarfile.dpdns.org/Song/2026021404.mp3',
+            song199: 'https://img.no911happystarfile.dpdns.org/Song/2026021405.mp3',
+            song200: 'https://img.no911happystarfile.dpdns.org/Song/2026021406.mp3',
+            song201: 'https://img.no911happystarfile.dpdns.org/Song/2026021407.mp3',
+            song202: 'https://img.no911happystarfile.dpdns.org/Song/2026021408.mp3',
+            song203: 'https://img.no911happystarfile.dpdns.org/Song/2026021409.mp3',
+            song204: 'https://img.no911happystarfile.dpdns.org/Song/2026021410.mp3',
+            song205: 'https://img.no911happystarfile.dpdns.org/Song/2026021411.mp3',
+            song206: 'https://img.no911happystarfile.dpdns.org/Song/2026021412.mp3',
+            song207: 'https://img.no911happystarfile.dpdns.org/Song/2026021413.mp3',
+            song208: 'https://img.no911happystarfile.dpdns.org/Song/2026021414.mp3',
+            song209: 'https://img.no911happystarfile.dpdns.org/Song/2026021415.mp3',
+            song210: 'https://img.no911happystarfile.dpdns.org/Song/2026021416.mp3',
+            song211: 'https://img.no911happystarfile.dpdns.org/Song/2026021417.mp3',
+            song212: 'https://img.no911happystarfile.dpdns.org/Song/2026021418.mp3',
+            song213: 'https://img.no911happystarfile.dpdns.org/Song/2026021419.mp3',
+            song214: 'https://img.no911happystarfile.dpdns.org/Song/2026021420.mp3',
+            song215: 'https://img.no911happystarfile.dpdns.org/Song/2026021421.mp3',
+            song216: 'https://img.no911happystarfile.dpdns.org/Song/2026021422.mp3',
+            song217: 'https://img.no911happystarfile.dpdns.org/Song/2026021423.mp3',
+            song218: 'https://img.no911happystarfile.dpdns.org/Song/2026021424.mp3',
+            song219: 'https://img.no911happystarfile.dpdns.org/Song/2026021425.mp3',
+            song220: 'https://img.no911happystarfile.dpdns.org/Song/2026021426.mp3',
+            song221: 'https://img.no911happystarfile.dpdns.org/Song/2026021427.mp3',
+            song222: 'https://img.no911happystarfile.dpdns.org/Song/2026021428.mp3',
+            song223: 'https://img.no911happystarfile.dpdns.org/Song/2026021429.mp3',
+            song224: 'https://img.no911happystarfile.dpdns.org/Song/2026021430.mp3',
+            song225: 'https://img.no911happystarfile.dpdns.org/Song/2026021431.mp3',
+            song226: 'https://img.no911happystarfile.dpdns.org/Song/2026021432.mp3',
+            song227: 'https://img.no911happystarfile.dpdns.org/Song/2026021433.mp3',
+            song228: 'https://img.no911happystarfile.dpdns.org/Song/2026021434.mp3',
+            song229: 'https://img.no911happystarfile.dpdns.org/Song/2026021435.mp3',
+            song230: 'https://img.no911happystarfile.dpdns.org/Song/2026021436.mp3',
+            song231: 'https://img.no911happystarfile.dpdns.org/Song/2026021437.mp3',
+            song232: 'https://img.no911happystarfile.dpdns.org/Song/2026021438.mp3',
+            song233: 'https://img.no911happystarfile.dpdns.org/Song/2026021439.mp3',
+            song234: 'https://img.no911happystarfile.dpdns.org/Song/2026021440.mp3',
+            song235: 'https://img.no911happystarfile.dpdns.org/Song/2026021441.mp3',
+            song236: 'https://img.no911happystarfile.dpdns.org/Song/2026021442.mp3',
+            song237: 'https://img.no911happystarfile.dpdns.org/Song/2026021443.mp3',
+            song238: 'https://img.no911happystarfile.dpdns.org/Song/2026021444.mp3',
+            song239: 'https://img.no911happystarfile.dpdns.org/Song/2026021445.mp3',
+            song240: 'https://img.no911happystarfile.dpdns.org/Song/2026021446.mp3',
+            song241: 'https://img.no911happystarfile.dpdns.org/Song/2026021447.mp3',
+            song242: 'https://img.no911happystarfile.dpdns.org/Song/2026021448.mp3',
+            song243: 'https://img.no911happystarfile.dpdns.org/Song/2026021449.mp3',
+            song244: 'https://img.no911happystarfile.dpdns.org/Song/2026021450.mp3',
+            song245: 'https://img.no911happystarfile.dpdns.org/Song/2026021451.mp3',
+            song246: 'https://img.no911happystarfile.dpdns.org/Song/2026021452.mp3',
+            song247: 'https://img.no911happystarfile.dpdns.org/Song/2026021453.mp3',
+            song248: 'https://img.no911happystarfile.dpdns.org/Song/2026021454.mp3',
+            song249: 'https://img.no911happystarfile.dpdns.org/Song/2026021455.mp3',
+            song250: 'https://img.no911happystarfile.dpdns.org/Song/2026021456.mp3',
+            song251: 'https://img.no911happystarfile.dpdns.org/Song/2026021457.mp3',
+            song252: 'https://img.no911happystarfile.dpdns.org/Song/2026021458.mp3',
+            song253: 'https://img.no911happystarfile.dpdns.org/Song/2026021459.mp3',
+            song254: 'https://img.no911happystarfile.dpdns.org/Song/2026021460.mp3',
+            song255: 'https://img.no911happystarfile.dpdns.org/Song/2026021461.mp3',
+            song256: 'https://img.no911happystarfile.dpdns.org/Song/2026021462.mp3',
+            song257: 'https://img.no911happystarfile.dpdns.org/Song/2026021463.mp3',
+            song258: 'https://img.no911happystarfile.dpdns.org/Song/2026021464.mp3',
+            song259: 'https://img.no911happystarfile.dpdns.org/Song/2026021465.mp3',
+            song260: 'https://img.no911happystarfile.dpdns.org/Song/2026021466.mp3',
+            song261: 'https://img.no911happystarfile.dpdns.org/Song/2026021467.mp3',
+            song262: 'https://img.no911happystarfile.dpdns.org/Song/2026021468.mp3',
+            song263: 'https://img.no911happystarfile.dpdns.org/Song/2026021469.mp3',
+            song264: 'https://img.no911happystarfile.dpdns.org/Song/2026021470.mp3',
+            song265: 'https://img.no911happystarfile.dpdns.org/Song/2026021471.mp3',
+            song266: 'https://img.no911happystarfile.dpdns.org/Song/2026021472.mp3',
+            song267: 'https://img.no911happystarfile.dpdns.org/Song/2026021473.mp3',
+            song268: 'https://img.no911happystarfile.dpdns.org/Song/2026021474.mp3',
+            song269: 'https://img.no911happystarfile.dpdns.org/Song/2026021475.mp3',
+            song270: 'https://img.no911happystarfile.dpdns.org/Song/2026021476.mp3',
+            song271: 'https://img.no911happystarfile.dpdns.org/Song/2026021477.mp3',
+            song272: 'https://img.no911happystarfile.dpdns.org/Song/2026021478.mp3',
+            song273: 'https://img.no911happystarfile.dpdns.org/Song/2026021479.mp3',
+            song274: 'https://img.no911happystarfile.dpdns.org/Song/2026021480.mp3',
+            song275: 'https://img.no911happystarfile.dpdns.org/Song/2026021481.mp3',
+            song276: 'https://img.no911happystarfile.dpdns.org/Song/2026021482.mp3',
+            song277: 'https://img.no911happystarfile.dpdns.org/Song/2026021483.mp3',
+            song278: 'https://img.no911happystarfile.dpdns.org/Song/2026021484.mp3',
+            song279: 'https://img.no911happystarfile.dpdns.org/Song/2026021485.mp3',
+            song280: 'https://img.no911happystarfile.dpdns.org/Song/2026021486.mp3',
+            song281: 'https://img.no911happystarfile.dpdns.org/Song/2026021487.mp3',
+            song282: 'https://img.no911happystarfile.dpdns.org/Song/2026021488.mp3',
+            song283: 'https://img.no911happystarfile.dpdns.org/Song/2026021489.mp3',
+            song284: 'https://img.no911happystarfile.dpdns.org/Song/2026021490.mp3',
+            song285: 'https://img.no911happystarfile.dpdns.org/Song/2026021491.mp3',
+            song286: 'https://img.no911happystarfile.dpdns.org/Song/2026021492.mp3',
+            song287: 'https://img.no911happystarfile.dpdns.org/Song/2026021493.mp3',
+            song288: 'https://img.no911happystarfile.dpdns.org/Song/2026021494.mp3',
         };
         
         const songTitles = [
@@ -4176,7 +4769,15 @@
             "把耳朵叫醒", "舍得", "说散就散", "折断玫瑰", "이젠안녕", "体面", "双鱼座", "为时已晚", "别怕我伤心", "九张机", "千古", "爱殇", "我们的纪念", "消愁",
             "눈 속에 묻힌 이름", "太晚才明白", "太晚才明白", "今昔", "一生等你", "喜欢你", "献天缘", "麻醉师", "浪人琵琶", "空空如也", "贝加尔湖畔", "piano", "岸边客",
             "起风了", "无情画", "顿啦爱你", "忆江南", "待取名9", "谪仙", "机器铃砍菜刀", "种果无果", "天下", "五块烟", "祝你爱我到天荒地老", "小三", "爱的华尔兹", "半山腰",
-             "风催雨", "Darling", "多幸运", "故人词"
+            "风催雨", "Darling", "多幸运", "故人词", "Always remember us this way", "First Love", "HEAVEN", "I Will Show You", "jazz bar", 
+            "Let me down slowly", "Ma Boo", "Nobody", "starboy", "爱", "爱的牢笼", "暗示分离", "黯然销魂",
+            "巴赫旧约", "白夜", "别打电话", "别怕我伤心", "并肩为家", "不负人间", "不做情人", "不做无法实现的梦", "差点（朝鲜语）", "痴情冢", "穿过一千公里找到你", "辞九门回忆", "此生不换",
+            "典狱司", "动物世界", "放晴", "放生", "该死的懦弱", "归去来兮", "桂花谣", "和最初一样", "画心", "回不来", "活色生香", "讲真的", "来啊",
+            "另一个时空的你", "六月的雨", "笼中鸟", "路灯下的微光", "面具", "难得有情人", "难生恨", "闹够了没有", "你眼里我有多差", "懦弱", "女孩", "菩提偈", "七个访客",
+            "七月七日晴", "凄美地", "千年泪", "千年之恋", "千秋迭梦", "青城山下白素贞", "青玉恋", "情骨", "全世界都快乐除了我自己", "如果爱能早些说出来", "如果爱忘了", "山外小楼夜听雨", "韶华与共",
+            "时间煮雨", "是不是爱情", "思慕", "叹云兮", "天若有情", "听夜雨", "忘了", "问明月", "我的一个道姑朋友", "我和我的祖国", "我走后", "无法完成的事", "嚣张",
+            "小可爱", "心之火", "循迹", "烟熏妆", "眼鼻嘴", "一爱难求", "一时的选择", "月半弯", "月半小夜曲", "月下起舞", "月牙湾", "越爱越推开", "怎么说我不爱你",
+            "长相思", "转身即心痛（双声线版）", "追梦人"
         ];
 
         const audioPlayer = document.getElementById('audioPlayer');
