@@ -1225,10 +1225,23 @@
 
         .carousel-slide img {
             max-width: 100%;
-            max-height: 35vh; /* 新增：限制轮播图图片的最大高度 */
+            max-height: 40vh; /* 新增：限制轮播图图片的最大高度 */
             object-fit: contain; /* 保持：确保图片完整显示 */
             border-radius: 8px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 确保轮播幻灯片里的视频也遵循 contain 规则 */
+        .carousel-slide video.video-player {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            background: #000; /* 视频不满时显示黑边 */
+        }
+
+        /* 之前设置过 max-height: 35vh，如果想在大屏上看更爽，可以根据需要调大 [cite: 274] */ 
+        .carousel-slide video {
+            max-height: 50vh; 
         }
 
         /* 左右箭头按钮 */
@@ -2274,7 +2287,7 @@
                             </div>
                             <div class="song" onclick="playSong('song127')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
-                                <h3>最美的颜色</h3>
+                                <h3>玫瑰枯萎在窗台</h3>
                                 <p>LLY</p>
                             </div>
                             <div class="song" onclick="playSong('song128')">
@@ -2519,12 +2532,12 @@
                             </div>
                             <div class="song" onclick="playSong('song176')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122005.jpg">
-                                <h3>起风了</h3>
+                                <h3>起风了（含彩蛋）</h3>
                                 <p>LLY➕小酒窝➕LLY</p>
                             </div>
                             <div class="song" onclick="playSong('song177')">
                                 <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122006.jpg">
-                                <h3>无情画（含彩蛋）</h3>
+                                <h3>无情画</h3>
                                 <p>LLY</p>
                             </div>
                             <div class="song" onclick="playSong('song178')">
@@ -4170,6 +4183,17 @@
             },
             {
                 id: 22,
+                title: "lly 真诚如你 岁岁无虞",
+                date: "2025.11.22  @丸丸丸丸丸辣",
+                preview: ``,
+                type: "mixed",
+                content: [
+                    { type: 'image', src: 'https://img.no911happystarfile.dpdns.org/FanBlessing/2025112213.jpg' },
+                    { type: 'video', src: 'https://img.no911happystarfile.dpdns.org/FanBlessing/2025112212.mp4' }
+                ]
+            },
+            {
+                id: 23,
                 title: "连空气中的微尘都诉说着对你的思念",
                 date: "2025.11.28  @粑粑奶昔拥护者",
                 preview: "",
@@ -4177,7 +4201,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251128.mp4"
             },
             {
-                id: 23,
+                id: 24,
                 title: "遇你，如春水映梨花",
                 date: "2025.11.29  @💫缠藤",
                 preview: "",
@@ -4185,7 +4209,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251129.mp4"
             },
             {
-                id: 24,
+                id: 25,
                 title: "记录是一份珍贵的宝藏，不仅仅是lly",
                 date: "2025.12.01  @粑粑奶昔拥护者",
                 preview: "",
@@ -4193,7 +4217,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251201.mp4"
             },
             {
-                id: 25,
+                id: 26,
                 title: "在这里，我找了微光与海",
                 date: "2025.12.09  @吐司真好吃🎀",
                 preview: "",
@@ -4207,7 +4231,7 @@
                 ]
             },
             {
-                id: 26,
+                id: 27,
                 title: "lly是最好的抽象博主",
                 date: "2025.12.12  @粑粑奶昔拥护者",
                 preview: `怎么会觉得丢脸呢，抽象也算是有趣的代名词，有趣的灵魂不会感到丢脸，我们搁那叭叭叭叭叭叭，我们跟你一起在抽象一起在玩一起笑，我们都被你感染了，一个来自有趣的人，一个心里有着万里繁空的人，我们都被这个人吸引了，所以，一点都不丢脸，你真的超级好啊！希望lly可以一直开心不要内耗！不对，可以内耗，但是不要过度内耗，不要在不值得事上内耗哦`,
@@ -4215,7 +4239,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251212.mp4"
             },
             {
-                id: 27,
+                id: 28,
                 title: "小鼻嘎lly",
                 date: "2025.12.20  @粑粑奶昔拥护者",
                 preview: "",
@@ -4223,7 +4247,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251220.mp4"
             },
             {
-                id: 28,
+                id: 29,
                 title: `时如皎皎月 不管多久远
                         lly，我们一直都在`,
                 date: "2025.12.22  @简一（没睡醒版）",
@@ -4232,7 +4256,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20251222.mp4"
             },
             {
-                id: 29,
+                id: 30,
                 title: "起码我们记得",
                 date: "2025.12.31  @进击的皮卡丘",
                 preview: `这个视频是NO.911的部分帖子合集，从12月21日进行统计，直至12月31日才正式画上句号。视频里的照片有的是根据头像来的，有的找不到头像或者头像太过于模糊的我就找别的图来代替了。💛
@@ -4244,7 +4268,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2025123101.mp4"
             },
             {
-                id: 30,
+                id: 31,
                 title: "致我的春天*",
                 date: "2025.12.31  @疯子与红头巾",
                 preview: ``,
@@ -4252,7 +4276,7 @@
                 content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20251231.jpg"]
             },
             {
-                id: 31,
+                id: 32,
                 title: "新年快乐，不止你我",
                 date: "2026.01.01  @粑粑奶昔拥护者",
                 preview: `他用一种近乎物理定律般的本能，将嘴上推开的责任，在行动中牢牢地履行和收回，否定只是假动作，兑现才是目的地。lly，新年快乐，多幸运遇见了你，多幸运，遇见了你们`,
@@ -4260,7 +4284,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260101.mp4"
             },
             {
-                id: 32,
+                id: 33,
                 title: "我们2026年见🎊",
                 date: "2026.01.01  @幸运号",
                 preview: "",
@@ -4268,7 +4292,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010102.mp4"
             },
             {
-                id: 33,
+                id: 34,
                 title: "我想你值得被所有美好包围",
                 date: "2026.01.01  @柚屿",
                 preview: `他说“911是夜空，你们是星光，是照亮911的星光”
@@ -4284,7 +4308,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/2026010103.mp4"
             },
             {
-                id: 34,
+                id: 35,
                 title: "感谢遇见，幸运遇见，新年快乐！",
                 date: "2026.01.01  @喜欢亚~（lly要开心噢）",
                 preview:  `lly,西西里里，编外人员，大家新年快乐！！未来我们一起走下去吧，一起奔向幸福！
@@ -4301,7 +4325,7 @@
                 ]
             },
             {
-                id: 35,
+                id: 36,
                 title: "你不必完美，只需存在，就足够被爱",
                 date: "2026.01.03  @吐司真好吃🎀",
                 preview: "",
@@ -4313,15 +4337,15 @@
                 ]
             },
             {
-                id: 36,
+                id: 37,
                 title: "我不怀疑 会有真心",
                 date: "2026.01.04  @算了我不会拆",
                 preview: "",
                 type: "video",
-                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260204.mp4"
+                content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260104.mp4"
             },
             {
-                id: 37,
+                id: 38,
                 title: "祝我认识lly一周年快乐*",
                 date: "2026.02.03  @uppffall",
                 preview: "",
@@ -4334,7 +4358,7 @@
                 ]
             },
             {
-                id: 38,
+                id: 39,
                 title: "lly，送你个小礼物",
                 date: "2026.02.11  @嗯嗯！",
                 preview: "第二部分的灵感来源于新年你在评论区说你看着人来来往往，我想告诉你我们还在，会一直在，所以我有了这个创意。也谢谢你一直都在，即使受到很多伤害，也没有选择离开，谢谢你的耐心和勇敢",
@@ -4342,7 +4366,7 @@
                 content: "https://img.no911happystarfile.dpdns.org/FanBlessing/20260211.mp4"
             },
             {
-                id: 39,
+                id: 40,
                 title: "你是我们的恒星✨*",
                 date: "2026.02.12  @疯子与红头巾",
                 preview: "",
@@ -4350,7 +4374,7 @@
                 content: ["https://img.no911happystarfile.dpdns.org/FanBlessing/20260212.jpg"]
             },
             {
-                id: 40,
+                id: 41,
                 title: "拆来信*",
                 date: "2026.02.13  @算了我不会拆",
                 preview: "",
@@ -4361,7 +4385,7 @@
                 ]
             },
             {
-                id: 41,
+                id: 42,
                 title: "给宝贝朋友lly的一封信*",
                 date: "2026.02.13  @喜欢亚~（lly要开心噢）",
                 preview: "",
@@ -4374,7 +4398,7 @@
                 ]
             },
             {
-                id: 42,
+                id: 43,
                 title: "星星的礼物",
                 date: "2026.02.15  @呜柒八糟",
                 preview: `这个视频名为《星星的礼物》总时长5:21 
@@ -4392,8 +4416,8 @@
                 ]
             },
             {
-                id: 43,
-                title: "一路相伴，双向微光",
+                id: 44,
+                title: "一路相伴，双向微光*",
                 date: "2026.02.16  @超级阿姝",
                 preview: `始于闲时的偶然一瞥，
                         却收获了一整个四季的温柔与欢喜。
@@ -4504,209 +4528,148 @@
         }
 
         // 播放内容（视频或图片）的核心函数
+        // 播放内容（视频、图片或混合媒体）的核心函数
         function playVideo() {
-            // 1. 安全检查
             if (!currentLetter) return;
 
-            // 【新增】播放内容前，强制暂停底部的背景音乐
+            // 1. 媒体互斥：暂停背景音乐和其他所有视频
             const audioPlayer = document.getElementById('audioPlayer');
-            if (audioPlayer) {
-                audioPlayer.pause();
-            }
+            if (audioPlayer) audioPlayer.pause();
+            document.querySelectorAll('video').forEach(v => v.pause());
 
-            document.querySelectorAll('video').forEach(v => v.pause()); // <--- 这行代码实现了视频互斥
-            
-            // 2. 获取容器并清空旧内容
             const playerContent = document.getElementById('playerContent');
             const titleEl = document.getElementById('playerTitle');
 
-            // 【关键修改】进入视频/图片播放时，添加媒体模式类
-            // 这会让 CSS 变成 Flex 居中 + 禁止滚动 + 黑色背景
+            // 2. 切换到媒体模式（黑底居中）
             playerContent.classList.add('media-mode');
-            playerContent.innerHTML = ''; // 清空之前的内容
-            // 3. 更新标题
+            playerContent.innerHTML = ''; 
+            
             if (titleEl) titleEl.textContent = currentLetter.title;
-
-            // 4. 【关键】无论是什么类型，进入播放模式后，头部只留“关闭”按钮
             updatePlayerHeaderForContent();
 
-            // 5. 根据类型渲染不同内容
-            if (currentLetter.type === 'video') {
-                // --- 视频逻辑 ---
+            // 3. 【核心逻辑】根据内容类型选择渲染方式
+            
+            // 情况 A: 混合媒体（新功能）
+            if (currentLetter.type === 'mixed') {
+                createImageCarousel(currentLetter.content);
+            } 
+            // 情况 B: 纯视频作品
+            else if (currentLetter.type === 'video') {
                 const video = document.createElement('video');
                 video.className = 'video-player';
                 video.src = currentLetter.content;
                 video.controls = true;
-                video.autoplay = true; // 自动播放
+                video.autoplay = true; 
                 video.controlsList = 'nodownload nofullscreen';
                 playerContent.appendChild(video);
-
-            } else if (currentLetter.type === 'image') {
-                // --- 图片逻辑 ---
-                
-                // 判断是否为多图（数组）
+            } 
+            // 情况 C: 纯图片作品（单图或多图轮播）
+            else if (currentLetter.type === 'image') {
                 if (Array.isArray(currentLetter.content) && currentLetter.content.length > 1) {
-                    // 如果是多张图，调用轮播组件（你需要确保 createImageCarousel 函数存在）
-                    createImageCarousel(currentLetter.content); 
+                    createImageCarousel(currentLetter.content);
                 } else {
-                    // 如果是单张图
                     const imgUrl = Array.isArray(currentLetter.content) ? currentLetter.content[0] : currentLetter.content;
-                    
                     const img = document.createElement('img');
-                    img.className = 'image-player'; // 应用刚才写的 CSS
+                    img.className = 'image-player';
                     img.src = imgUrl;
                     img.alt = currentLetter.title;
-                    
-                    // 防止图片加载失败
-                    img.onerror = function() {
-                        this.alt = "图片加载失败";
-                        this.style.display = "none";
-                        playerContent.innerHTML = '<div style="color:white;">图片无法显示</div>';
-                    };
-                    
                     playerContent.appendChild(img);
                 }
             }
         }
 
         // 创建图片轮播组件
-        function createImageCarousel(imageUrls) {
+        // 创建支持图片和视频混合的轮播组件
+        function createImageCarousel(mediaItems) {
             // 1. 创建轮播容器
             const carouselContainer = document.createElement('div');
             carouselContainer.className = 'image-carousel-container';
 
-            // 2. 创建轮播轨道，包含所有图片
+            // 2. 创建轮播轨道
             const carouselTrack = document.createElement('div');
             carouselTrack.className = 'carousel-track';
-            carouselTrack.innerHTML = imageUrls.map(url => `
-                <div class="carousel-slide">
-                    <img src="${url}" alt="轮播图片" loading="lazy">
-                </div>
-            `).join('');
+            
+            // 【核心逻辑】遍历内容，根据 type 生成标签
+            carouselTrack.innerHTML = mediaItems.map(item => {
+                // 兼容旧的纯图片字符串格式
+                if (typeof item === 'string') {
+                    return `
+                        <div class="carousel-slide">
+                            <img src="${item}" loading="lazy">
+                        </div>`;
+                }
+                // 处理新格式：视频
+                if (item.type === 'video') {
+                    return `
+                        <div class="carousel-slide">
+                            <video class="video-player" src="${item.src}" controls controlsList="nodownload"></video>
+                        </div>`;
+                } 
+                // 处理新格式：图片
+                else {
+                    return `
+                        <div class="carousel-slide">
+                            <img src="${item.src}" loading="lazy">
+                        </div>`;
+                }
+            }).join('');
 
-            // 3. 创建左右箭头控制器
+            // 3. 创建控制按钮（左右箭头）
             const prevButton = document.createElement('button');
             prevButton.className = 'carousel-button carousel-button-prev';
-            prevButton.innerHTML = '&lsaquo;'; // 左箭头符号
-            prevButton.setAttribute('aria-label', '上一张图片');
-
+            prevButton.innerHTML = '&lsaquo;';
             const nextButton = document.createElement('button');
             nextButton.className = 'carousel-button carousel-button-next';
-            nextButton.innerHTML = '&rsaquo;'; // 右箭头符号
-            nextButton.setAttribute('aria-label', '下一张图片');
+            nextButton.innerHTML = '&rsaquo;';
 
             // 4. 创建指示器（小圆点）
             const indicatorsContainer = document.createElement('div');
             indicatorsContainer.className = 'carousel-indicators';
-            indicatorsContainer.innerHTML = imageUrls.map((_, index) => `
-                <button class="indicator ${index === 0 ? 'active' : ''}" data-index="${index}" aria-label="跳转到第 ${index + 1} 张图片"></button>
+            indicatorsContainer.innerHTML = mediaItems.map((_, index) => `
+                <button class="indicator ${index === 0 ? 'active' : ''}" data-index="${index}"></button>
             `).join('');
 
-            // 5. 组装所有部件
+            // 组装
             carouselContainer.appendChild(carouselTrack);
             carouselContainer.appendChild(prevButton);
             carouselContainer.appendChild(nextButton);
             carouselContainer.appendChild(indicatorsContainer);
-
-            // 6. 将轮播容器添加到主内容区
             playerContent.appendChild(carouselContainer);
 
-            // 7. 初始化轮播状态
+            // --- 轮播逻辑控制 ---
             let currentSlideIndex = 0;
             const slides = carouselTrack.querySelectorAll('.carousel-slide');
             const totalSlides = slides.length;
             const indicators = indicatorsContainer.querySelectorAll('.indicator');
 
-            // 8. 定义更新轮播位置的函数
             function updateCarousel() {
-                // 移动轨道
                 const offset = -currentSlideIndex * 100;
                 carouselTrack.style.transform = `translateX(${offset}%)`;
 
-                // 更新指示器状态
+                // 【自动暂停】切换幻灯片时，暂停所有视频，防止声音重叠
+                carouselTrack.querySelectorAll('video').forEach(v => v.pause());
+
                 indicators.forEach((indicator, idx) => {
                     indicator.classList.toggle('active', idx === currentSlideIndex);
                 });
             }
 
-            // 9. 绑定箭头按钮事件
-            prevButton.addEventListener('click', () => {
+            // 绑定事件
+            prevButton.onclick = () => {
                 currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
                 updateCarousel();
-            });
-
-            nextButton.addEventListener('click', () => {
+            };
+            nextButton.onclick = () => {
                 currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
                 updateCarousel();
-            });
-
-            // 10. 绑定指示器点击事件
+            };
             indicators.forEach(indicator => {
-                indicator.addEventListener('click', () => {
-                    const index = parseInt(indicator.getAttribute('data-index'));
-                    if (index !== currentSlideIndex) {
-                        currentSlideIndex = index;
-                        updateCarousel();
-                    }
-                });
-            });
-
-            // 11. 可选：添加键盘支持（左右方向键）
-            document.addEventListener('keydown', function handleKeydown(e) {
-                if (!carouselContainer.parentNode) {
-                    // 如果轮播图已从DOM移除，则清理事件监听
-                    document.removeEventListener('keydown', handleKeydown);
-                    return;
-                }
-                if (e.key === 'ArrowLeft') {
-                    prevButton.click();
-                } else if (e.key === 'ArrowRight') {
-                    nextButton.click();
-                }
-            });
-
-            // 12. 可选：添加触摸滑动支持（用于移动设备）
-            let startX = 0;
-            let isDragging = false;
-
-            carouselTrack.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-                isDragging = true;
-                carouselTrack.style.transition = 'none'; // 拖动时取消动画
-            }, { passive: true });
-
-            carouselTrack.addEventListener('touchmove', (e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                const x = e.touches[0].clientX;
-                const walk = x - startX;
-                // 实时跟随手指移动轨道（可限制最大移动距离）
-                const offset = -currentSlideIndex * 100 + (walk / carouselTrack.offsetWidth) * 100;
-                carouselTrack.style.transform = `translateX(${offset}%)`;
-            }, { passive: false });
-
-            carouselTrack.addEventListener('touchend', (e) => {
-                if (!isDragging) return;
-                isDragging = false;
-                carouselTrack.style.transition = 'transform 0.5s ease-in-out'; // 恢复动画
-
-                const endX = e.changedTouches[0].clientX;
-                const diff = startX - endX;
-                const threshold = 50; // 滑动阈值，超过此值才切换
-
-                if (diff > threshold && currentSlideIndex < totalSlides - 1) {
-                    // 向左滑，看下一张
-                    nextButton.click();
-                } else if (diff < -threshold && currentSlideIndex > 0) {
-                    // 向右滑，看上一张
-                    prevButton.click();
-                } else {
-                    // 滑动距离不足，回弹到当前图片
+                indicator.onclick = () => {
+                    currentSlideIndex = parseInt(indicator.getAttribute('data-index'));
                     updateCarousel();
-                }
+                };
             });
 
-            // 初始更新一次
             updateCarousel();
         }
 
@@ -5031,8 +4994,8 @@
             song173: 'https://img.no911happystarfile.dpdns.org/Song/2026010802.mp3',
             song174: 'https://img.no911happystarfile.dpdns.org/Song/2026010803.mp3',
             song175: 'https://img.no911happystarfile.dpdns.org/Song/2026010804.mp3',
-            song176: 'https://img.no911happystarfile.dpdns.org/Song/2026010805.mp3',
-            song177: 'https://img.no911happystarfile.dpdns.org/Song/2026010806.mp3',
+            song176: 'https://img.no911happystarfile.dpdns.org/Song/2026010806.mp3',
+            song177: 'https://img.no911happystarfile.dpdns.org/Song/2026010805.mp3',
             song178: 'https://img.no911happystarfile.dpdns.org/Song/2026010807.mp3',
             song179: 'https://img.no911happystarfile.dpdns.org/Song/2026010808.mp3',
             song180: 'https://img.no911happystarfile.dpdns.org/Song/20260212.mp3',
@@ -5162,8 +5125,8 @@
             "洛希极限", "座位", "未完成的爱", "同花顺", "同花顺", "心如止水", "执迷不悟", "小雨", "我还记得那天", "白羊", "处处吻", "月亮代表我的心", "我只在乎你",
             "把耳朵叫醒", "舍得", "说散就散", "折断玫瑰", "이젠안녕", "体面", "双鱼座", "为时已晚", "别怕我伤心", "九张机", "千古", "爱殇", "我们的纪念", "消愁",
             "눈 속에 묻힌 이름", "太晚才明白", "太晚才明白", "今昔", "一生等你", "喜欢你", "献天缘", "麻醉师", "浪人琵琶", "空空如也", "贝加尔湖畔", "piano", "岸边客",
-            "起风了", "无情画", "顿啦爱你", "忆江南", "待取名9", "谪仙", "机器铃砍菜刀", "种果无果", "天下", "五块烟", "祝你爱我到天荒地老", "小三", "爱的华尔兹", "半山腰",
-            "风催雨", "Darling", "多幸运", "故人词", "Always remember us this way", "First Love", "HEAVEN", "I Will Show You", "jazz bar", 
+            "起风了（含彩蛋）", "无情画", "顿啦爱你", "忆江南", "待取名9", "谪仙", "机器铃砍菜刀", "种果无果", "天下", "五块烟", "祝你爱我到天荒地老", "小三", "爱的华尔兹", "半山腰",
+            "风催雨", "Darling", "多幸运", "故人词", "姐姐我想得到你（含彩蛋）", "Always remember us this way", "First Love", "HEAVEN", "I Will Show You", "jazz bar", 
             "Let me down slowly", "Ma Boo", "Nobody", "starboy", "爱", "爱的牢笼", "暗示分离", "黯然销魂",
             "巴赫旧约", "白夜", "别打电话", "别怕我伤心", "并肩为家", "不负人间", "不做情人", "不做无法实现的梦", "差点（朝鲜语）", "痴情冢", "穿过一千公里找到你", "辞九门回忆", "此生不换",
             "典狱司", "动物世界", "放晴", "放生", "该死的懦弱", "归去来兮", "桂花谣", "和最初一样", "画心", "回不来", "活色生香", "讲真的", "来啊",
