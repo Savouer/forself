@@ -369,7 +369,17 @@
         @media (max-width: 768px) {
             .content {
                 flex-direction: column;
-                padding: 8vh 3vw 2vh;
+                padding: 8vh 4vw 2vh; /* 统一左右页边距 */
+                align-items: center;  /* 强制所有子项水平居中 */
+            }
+
+            /* 【核心修改】确保左右两列在手机上宽度完全一致 */
+            .letters-container,
+            .right-content {
+                width: 100% !important; /* 强制占满父容器 */
+                max-width: 100% !important; 
+                min-width: 0 !important; /* 移除之前的 320px 限制 [cite: 91] */
+                margin: 0 0 2rem 0 !important; /* 统一模块间的上下间距 [cite: 92] */
             }
         }
 
@@ -412,8 +422,12 @@
         /* 在小屏幕上调整高度 */
         @media (max-width: 768px) {
             .carousel {
-                height: 50vh;
-                margin-bottom: 2vh;
+                /* 调整手机端高度，防止过大 [cite: 98] */
+                height: 45vh; 
+                min-height: 300px;
+                max-height: 500px;
+                width: 100%;
+                margin-bottom: 0; /* 间距由父级 gap 统一控制 */
             }
         }
 
@@ -611,9 +625,18 @@
 
         /* 在小屏幕上调整歌曲项 */
         @media (max-width: 768px) {
+            .music-player {
+            width: 100%;
+            height: 40vh; /* 适当减小手机端高度 [cite: 173] */
+            min-height: 350px;
+            padding: 15px; /* 稍微缩小内边距 [cite: 174] */
+            box-sizing: border-box; /* 确保 padding 不增加总宽度 [cite: 121] */
+            }
+            
+            /* 确保歌曲卡片在手机上尺寸适中 */
             .song {
-                width: 140px;
-                margin: 0 2vw 2vh 0;
+                height: 90%; /* 留出一点空间给滚动条 */
+                aspect-ratio: 3/4;
             }
         }
         
@@ -3095,6 +3118,11 @@
                                 <h3>追梦人</h3>
                                 <p>LLY</p>
                             </div>
+                            <div class="song" onclick="playSong('song289')">
+                                <img src="https://img.no911happystarfile.dpdns.org/SongCover/2025122010.jpg">
+                                <h3>流星雨又来临</h3>
+                                <p>LLY</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -5107,6 +5135,7 @@
             song286: 'https://img.no911happystarfile.dpdns.org/Song/2026021492.mp3',
             song287: 'https://img.no911happystarfile.dpdns.org/Song/2026021493.mp3',
             song288: 'https://img.no911happystarfile.dpdns.org/Song/2026021494.mp3',
+            song289: 'https://img.no911happystarfile.dpdns.org/Song/2026021601.mp3',
         };
         
         const songTitles = [
@@ -5134,7 +5163,7 @@
             "七月七日晴", "凄美地", "千年泪", "千年之恋", "千秋迭梦", "青城山下白素贞", "青玉恋", "情骨", "全世界都快乐除了我自己", "如果爱能早些说出来", "如果爱忘了", "山外小楼夜听雨", "韶华与共",
             "时间煮雨", "是不是爱情", "思慕", "叹云兮", "天若有情", "听夜雨", "忘了", "问明月", "我的一个道姑朋友", "我和我的祖国", "我走后", "无法完成的事", "嚣张",
             "小可爱", "心之火", "循迹", "烟熏妆", "眼鼻嘴", "一爱难求", "一时的选择", "月半弯", "月半小夜曲", "月下起舞", "月牙湾", "越爱越推开", "怎么说我不爱你",
-            "长相思", "转身即心痛（双声线版）", "追梦人"
+            "长相思", "转身即心痛（双声线版）", "追梦人", "流星雨又来临"
         ];
 
         const audioPlayer = document.getElementById('audioPlayer');
